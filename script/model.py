@@ -298,6 +298,17 @@ class LitAddaUnet(LitI2IGAN):
                           self.hparams.ngf, "unet_256", norm="batch", 
                           use_dropout=not self.hparams.no_dropout_G)
         self.G.load_state_dict(torch.load(self.hparams.pretrained_unet_path))
+        if self.hparams.start_only
+            for p in self.G.parameters():
+                p.requires_grad = False
+            for p in self.G.unet_block.down.parameters():
+                p.requires_grad = True
+        if self.hparams.end_only
+            for p in self.G.parameters():
+                p.requires_grad = False
+            for p in self.G.unet_block.up.parameters():
+                p.requires_grad = True
+
 
         self.D = define_D(self.hparams.out_nc, self.hparams.ndf, 'basic',
                           n_layers_D=3, norm="batch")
