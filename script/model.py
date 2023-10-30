@@ -291,8 +291,8 @@ class LitAddaUnet(LitI2IGAN):
                             self.hparams.ngf, "unet_256", norm="batch", 
                             use_dropout=not self.hparams.no_dropout_G).eval()
         self.G_A.load_state_dict(torch.load(self.hparams.pretrained_unet_path))
-        for n,p in self.G_A.parameters():
-            print(n)
+        for n,p in self.G_A.named_parameters():
+            print(n,p)
         for p in self.G_A.parameters():
             p.requires_grad = False
 
@@ -305,11 +305,10 @@ class LitAddaUnet(LitI2IGAN):
                           n_layers_D=3, norm="batch")
 
     def training_step(self, batch, batch_idx, optimizer_idx):
-        layer = self.hparams.layer
         src_A, src_B = batch
         with torch.no_grad():
-            tgt_A = self.G_A(src_A,layer)
-        tgt_B = self.G(src_B,layer)
+            tgt_A = self.G_A(src_A)
+        tgt_B = self.G(src_B)
         # D
         if optimizer_idx == 0:
             pred_y = self.D(tgt_A)
