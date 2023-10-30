@@ -81,7 +81,8 @@ def read_flat_dir(image_dir: str):
         # pil_img = read_image(
         #    os.path.join(image_dir, img_f), autocontrast=True, cutoff=0.5
         # )
-        pil_img = read_image(
+      print(image_dir, img_f)  
+      pil_img = read_image(
             os.path.join(image_dir, img_f), autocontrast=False, cutoff=0
         )
         result[img_f] = pil_img
