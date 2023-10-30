@@ -9,7 +9,7 @@ SRC_DIR=$1 # "${DATA_DIR}/input/train"
 TGT_DIR=$2 # "${DATA_DIR}/output/train"
 CKPT_FILE=$3 # "./checkpoints/baseline_${OUTPUT}_${INPUT}.ckpt"
 
-BSIZE="8"
+BSIZE="2"
 LR="1e-3"
 EPOCHS="100"
 WEIGHT_DECAY="1e-5"
