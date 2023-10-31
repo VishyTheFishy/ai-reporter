@@ -66,20 +66,23 @@ def train_epoch(
     epoch,
     const_lr_epochs,
     total_epochs,
-    coef,
-):
-    for src_img, tgt_img in train_loader:
+    coef,):  
+    num_accum = 4
+    opt.zero_grad()
+    for i, (src_img, tgt_img) in enumerate(train_loader):
         src_img, tgt_img = src_img.cuda(), tgt_img.cuda()
         pred = model(src_img)
         l1_loss = F.l1_loss(pred, tgt_img, reduction="mean")
         anchor_loss = dist_to_anchor(model, model_anchor)
-        loss = l1_loss + coef * anchor_loss
-        opt.zero_grad()
+        loss = (l1_loss + coef * anchor_loss)/num_accum
         loss.backward()
         print(
             f"Epoch {epoch}-of-{total_epochs}, L1 Loss: {l1_loss.item()}, anchor loss: {anchor_loss.item()}"
         )
-        opt.step()
+        if ((i + 1) % num_accum == 0) or (batch_idx + 1 == len(train_loader)):
+            opt.step()
+            opt.zero_grad()
+
     adjust_learning_rate(opt, init_lr, epoch, const_lr_epochs, total_epochs)
 
 
