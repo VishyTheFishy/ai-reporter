@@ -429,9 +429,9 @@ class ResnetBlock(nn.Module):
         conv_block += [nn.Conv2d(dim, dim, kernel_size=3, padding=p, bias=use_bias), norm_layer(dim)]
 
         return nn.Sequential(*conv_block)
-
     def forward(self, x):
         """Forward function (with skip connections)"""
+        for
         out = x + self.conv_block(x)  # add skip connections
         return out
 
@@ -454,6 +454,7 @@ class UnetGenerator(nn.Module):
         """
         super(UnetGenerator, self).__init__()
         # construct unet structure
+        hidden_states = []
         unet_block = UnetSkipConnectionBlock(ngf * 8, ngf * 8, input_nc=None, submodule=None, norm_layer=norm_layer, innermost=True, downconv_module=downconv_module)  # add the innermost layer
         for i in range(num_downs - 5):          # add intermediate layers with ngf * 8 filters
             unet_block = UnetSkipConnectionBlock(ngf * 8, ngf * 8, input_nc=None, submodule=unet_block, norm_layer=norm_layer, use_dropout=use_dropout, downconv_module=downconv_module)
@@ -462,9 +463,12 @@ class UnetGenerator(nn.Module):
         unet_block = UnetSkipConnectionBlock(ngf * 2, ngf * 4, input_nc=None, submodule=unet_block, norm_layer=norm_layer, downconv_module=downconv_module)
         unet_block = UnetSkipConnectionBlock(ngf, ngf * 2, input_nc=None, submodule=unet_block, norm_layer=norm_layer, downconv_module=downconv_module)
         self.model = UnetSkipConnectionBlock(output_nc, ngf, input_nc=input_nc, submodule=unet_block, outermost=True, norm_layer=norm_layer, downconv_module=downconv_module)  # add the outermost layer
-
+    def store_hidden(m,i,o)
+        hidden_states.append(o)
     def forward(self, input):
         """Standard forward"""
+        for layer in self:
+            layer.register_forward_hook(store_hidden)
         return self.model(input)
 
 class MSUnetGenerator(UnetGenerator):
