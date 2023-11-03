@@ -79,7 +79,7 @@ def train_epoch(
         print(
             f"Epoch {epoch}-of-{total_epochs}, L1 Loss: {l1_loss.item()}, anchor loss: {anchor_loss.item()}"
         )
-        if ((i + 1) % num_accum == 0) or (batch_idx + 1 == len(train_loader)):
+        if ((i + 1) % num_accum == 0) or (i + 1 == len(train_loader)):
             opt.step()
             opt.zero_grad()
 
