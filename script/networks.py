@@ -465,11 +465,15 @@ class UnetGenerator(nn.Module):
         self.model = UnetSkipConnectionBlock(output_nc, ngf, input_nc=input_nc, submodule=unet_block, outermost=True, norm_layer=norm_layer, downconv_module=downconv_module)  # add the outermost layer
     def store_hidden(m,i,o)
         hidden_states.append(o)
-    def forward(self, input):
+    def forward(self, input, layer_n = None):
         """Standard forward"""
-        for layer in self:
-            layer.register_forward_hook(store_hidden)
-        return self.model(input)
+        if layer_n != None:
+            for layer in self:
+                layer.register_forward_hook(store_hidden)
+        out = self.model(input)
+        if layer_n != None:
+            return hidden_states[layer_n]
+        return out
 
 class MSUnetGenerator(UnetGenerator):
     def __init__(self, input_nc, output_nc, num_downs, ngf=64, norm_layer=nn.BatchNorm2d, use_dropout=False):
