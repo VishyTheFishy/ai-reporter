@@ -453,7 +453,6 @@ class UnetGenerator(nn.Module):
         """
         super(UnetGenerator, self).__init__()
         # construct unet structure
-        hidden_states = []
         unet_block = UnetSkipConnectionBlock(ngf * 8, ngf * 8, input_nc=None, submodule=None, norm_layer=norm_layer, innermost=True, downconv_module=downconv_module)  # add the innermost layer
         for i in range(num_downs - 5):          # add intermediate layers with ngf * 8 filters
             unet_block = UnetSkipConnectionBlock(ngf * 8, ngf * 8, input_nc=None, submodule=unet_block, norm_layer=norm_layer, use_dropout=use_dropout, downconv_module=downconv_module)
@@ -461,18 +460,21 @@ class UnetGenerator(nn.Module):
         unet_block = UnetSkipConnectionBlock(ngf * 4, ngf * 8, input_nc=None, submodule=unet_block, norm_layer=norm_layer, downconv_module=downconv_module)
         unet_block = UnetSkipConnectionBlock(ngf * 2, ngf * 4, input_nc=None, submodule=unet_block, norm_layer=norm_layer, downconv_module=downconv_module)
         unet_block = UnetSkipConnectionBlock(ngf, ngf * 2, input_nc=None, submodule=unet_block, norm_layer=norm_layer, downconv_module=downconv_module)
-        self.model = UnetSkipConnectionBlock(output_nc, ngf, input_nc=input_nc, submodule=unet_block, outermost=True, norm_layer=norm_layer, downconv_module=downconv_module)  # add the outermost layer
-    def store_hidden(m,i,o):
-        hidden_states.append(o)
+        self.model = UnetSkipConnectionBlock(output_nc, ngf, input_nc=input_nc, submodule=unet_block, outermost=True, norm_layer=norm_layer, downconv_module=downconv_module)  # add the outermost layer        
+    
     def forward(self, input, layer_n = None):
-        """Standard forward"""
-        if layer_n != None:
-            for layer in self.modules():
-                if isinstance(layer, nn.Conv2d):
-                    layer.register_forward_hook(store_hidden)
+        def hook_fn(module, input, output):
+            self.hidden = output
+        
+        conv_layers = 0
+        for layer in self.model.modules():
+            if isinstance(layer, nn.Conv2d):
+                conv_layers += 1
+                if conv_layers == layer_n:
+                    layer.register_forward_hook(hook_fn)
         out = self.model(input)
-        if layer_n != None:
-            return hidden_states[layer_n]
+        if layer_n is not None:
+            return self.hidden
         return out
 
 class MSUnetGenerator(UnetGenerator):
