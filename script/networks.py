@@ -467,8 +467,9 @@ class UnetGenerator(nn.Module):
     def forward(self, input, layer_n = None):
         """Standard forward"""
         if layer_n != None:
-            for layer in self:
-                layer.register_forward_hook(store_hidden)
+            for layer in self.modules():
+                if isinstance(layer, nn.Conv2d):
+                    layer.register_forward_hook(store_hidden)
         out = self.model(input)
         if layer_n != None:
             return hidden_states[layer_n]
