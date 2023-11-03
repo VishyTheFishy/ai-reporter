@@ -431,7 +431,6 @@ class ResnetBlock(nn.Module):
         return nn.Sequential(*conv_block)
     def forward(self, x):
         """Forward function (with skip connections)"""
-        for
         out = x + self.conv_block(x)  # add skip connections
         return out
 
