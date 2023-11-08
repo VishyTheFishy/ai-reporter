@@ -287,10 +287,18 @@ class LitMSUnetGAN(LitUnetGAN):
 class LitAddaUnet(LitI2IGAN):
 
     def _init_models(self):
+        old_dict = torch.load(self.hparams.pretrained_unet_path)
+        state_dict = {}
+        for key, value in old_dict.items():
+            new_key = key.replace('module.', '')  # Remove "module." from the key
+            state_dict[new_key] = value
+
+
         self.G_A = define_G(self.hparams.in_nc, self.hparams.out_nc, 
                             self.hparams.ngf, "unet_256", norm="batch", 
                             use_dropout=not self.hparams.no_dropout_G).eval()
-        self.G_A.load_state_dict(torch.load(self.hparams.pretrained_unet_path))
+        self.G_A.load_state_dict(state_dict)
+
         for n,p in self.G_A.named_parameters():
             print(n,p)
         for p in self.G_A.parameters():
@@ -299,7 +307,7 @@ class LitAddaUnet(LitI2IGAN):
         self.G = define_G(self.hparams.in_nc, self.hparams.out_nc, 
                           self.hparams.ngf, "unet_256", norm="batch", 
                           use_dropout=not self.hparams.no_dropout_G)
-        self.G.load_state_dict(torch.load(self.hparams.pretrained_unet_path))
+        self.G.load_state_dict(state_dict)
 
         self.D = define_D(self.hparams.out_nc, self.hparams.ndf, 'basic',
                           n_layers_D=3, norm="batch")
