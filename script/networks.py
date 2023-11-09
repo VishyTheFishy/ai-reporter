@@ -468,10 +468,13 @@ class UnetGenerator(nn.Module):
         
         conv_layers = 0
         for layer in self.model.modules():
+            print(layer)
             if isinstance(layer, nn.Conv2d):
                 conv_layers += 1
+                print(conv_layers)
                 if conv_layers == layer_n:
                     layer.register_forward_hook(hook_fn)
+                    print(hook_registered)
         out = self.model(input)
         if layer_n is not None:
             return self.hidden
