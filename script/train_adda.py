@@ -44,7 +44,7 @@ def main():
                               out_imsize=args.out_imsize, 
                               bsize=2, 
                               num_workers=args.num_workers,
-                              max_B_size=args.max_B_size)
+                              max_B_size=2)
 
     dl_train = dm_train.train_dataloader()
 
