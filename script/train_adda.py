@@ -1,5 +1,6 @@
 from argparse import ArgumentParser
 import numpy as np
+import os
 
 import torch
 from torch.utils.data import DataLoader
@@ -45,7 +46,7 @@ def main():
 
     dl_train = dm_train.train_dataloader()
 
-    dm_test = LitAlignedDM(data_dir=args.data_dir_B,
+    dm_test = LitAlignedDM(src_dir=args.data_dir_B,
                            out_imsize=args.out_imsize, bsize=1, 
                            num_workers=args.num_workers)
     dl_test = dm_test.test_dataloader()
