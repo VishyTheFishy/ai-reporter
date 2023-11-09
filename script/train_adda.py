@@ -42,7 +42,7 @@ def main():
     dm_train = LitUnalignedDM(src_dir=os.path.join(args.data_dir_A,'input'), 
                               tgt_dir=os.path.join(args.data_dir_B,'input'), 
                               out_imsize=args.out_imsize, 
-                              bsize=args.bsize, 
+                              bsize=2, 
                               num_workers=args.num_workers,
                               max_B_size=args.max_B_size)
 
