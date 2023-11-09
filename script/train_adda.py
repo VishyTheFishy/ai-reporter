@@ -38,10 +38,11 @@ def main():
 
     model = LitAddaUnet(**vars(args))
 
-    dm_train = LitUnalignedDM(dir_A=args.data_dir_A, dir_B=args.data_dir_B, 
+    dm_train = LitUnalignedDM(src_dir=args.data_dir_A, tgt_dir=args.data_dir_B, 
                               out_imsize=args.out_imsize, bsize=args.bsize, 
                               num_workers=args.num_workers,
                               max_B_size=args.max_B_size)
+
     dl_train = dm_train.train_dataloader()
 
     dm_test = LitAlignedDM(data_dir=args.data_dir_B,
