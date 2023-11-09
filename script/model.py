@@ -199,7 +199,7 @@ class LitI2IGAN(pl.LightningModule):
 
         # https://github.com/junyanz/pytorch-CycleGAN-and-pix2pix/blob/f13aab8148bd5f15b9eb47b690496df8dadbab0c/models/networks.py#L46
         def lambda_rule(epoch):
-            n_epochs_decay = float(self.hparams.max_epochs - self.hparams.n_epochs_const + 1)
+            n_epochs_decay = float(100 - self.hparams.n_epochs_const + 1) #self.hparams.max_epochs
             lr_l = 1.0 - max(0, epoch - self.hparams.n_epochs_const) / n_epochs_decay
             return lr_l
 
