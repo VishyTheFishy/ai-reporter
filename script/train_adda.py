@@ -28,6 +28,7 @@ def parse_arguments():
     parser.add_argument("--save_dir", type=str, default="./lightning_logs")
     parser.add_argument("--name", type=str, default='')
     parser.add_argument("--version", type=str, default=None)
+    parser.add_argument("--max_epochs", type=str, default=None)
 
     parser = LitAddaUnet.add_model_specific_args(parser)
     parser = pl.Trainer.add_argparse_args(parser) # max_epochs
