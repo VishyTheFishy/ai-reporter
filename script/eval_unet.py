@@ -68,7 +68,7 @@ def main():
         model = define_G(in_nc, out_nc, 64, "unet_256", norm="batch", use_dropout=False)
         state_dict = torch.load(args.ckpt_file)
         
-        if True: #args.load_from_pl:
+        if False: #args.load_from_pl:
             state_dict = state_dict["state_dict"]
             prefix = "G."
             state_dict = {k[len(prefix):]: v for k, v in state_dict.items() if k.startswith(prefix)}
