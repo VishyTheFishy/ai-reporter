@@ -64,7 +64,7 @@ def main():
     in_nc = src_batch.size(1)
     out_nc = tgt_batch.size(1)
 
-    if args.arch == 'unet':
+    if True: #args.arch == 'unet':
         model = define_G(in_nc, out_nc, 64, "unet_256", norm="batch", use_dropout=False)
         state_dict = torch.load(args.ckpt_file)
         if args.load_from_pl:
