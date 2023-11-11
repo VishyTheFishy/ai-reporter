@@ -17,6 +17,10 @@ echo "TGT_DIR: $TGT_DIR"
 echo "CKPT_FILE: $CKPT_FILE"
 
 python eval_unet.py 
-  --src-dir $SRC_DIR --tgt-dir $TGT_DIR \
-  --img-size 1024 --ckpt-file $CKPT_FILE --save_results_dir $SAVE_DIR $ADDITIONAL_FLAGS
+  --src-dir $SRC_DIR 
+  --tgt-dir $TGT_DIR
+  --img-size 1024 
+  --ckpt-file $CKPT_FILE 
+  --save_results_dir $SAVE_DIR
+  $SAVE_DIR $ADDITIONAL_FLAGS
 
