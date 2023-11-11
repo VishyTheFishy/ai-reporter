@@ -66,7 +66,7 @@ def main():
 
     if True: #args.arch == 'unet':
         model = define_G(in_nc, out_nc, 64, "unet_256", norm="batch", use_dropout=False)
-        state_dict = torch.load(args.ckpt_file)
+        state_dict = torch.load(args.ckpt_file).state_dict
         
         if args.load_from_pl:
             state_dict = state_dict["state_dict"]
