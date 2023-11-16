@@ -75,6 +75,8 @@ def train_epoch(
         l1_loss = F.l1_loss(pred, tgt_img, reduction="mean")
         anchor_loss = dist_to_anchor(model, model_anchor)
         loss = (l1_loss + coef * anchor_loss)/num_accum
+        with open("unet_losses.txt", "w") as loss_file:
+            loss_file.write(loss.item())
         loss.backward()
         print(
             f"Epoch {epoch}-of-{total_epochs}, L1 Loss: {l1_loss.item()}, anchor loss: {anchor_loss.item()}"
