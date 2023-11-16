@@ -11,7 +11,7 @@ CKPT_FILE=$3 # "./checkpoints/baseline_${OUTPUT}_${INPUT}.ckpt"
 
 BSIZE="2"
 LR="1e-3"
-EPOCHS="100"
+EPOCHS="25"
 WEIGHT_DECAY="1e-5"
 
 python -m BNNBench.trainer.ensemble_trainer \
