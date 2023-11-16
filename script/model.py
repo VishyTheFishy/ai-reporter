@@ -331,6 +331,7 @@ class LitAddaUnet(LitI2IGAN):
 
             loss_d = (loss_A + loss_B) / 2
             self.log("loss_d", loss_d, prog_bar=True, logger=True)
+            print("d", loss_d.item())
             return loss_d
         # G
         elif optimizer_idx == 1:
@@ -338,7 +339,7 @@ class LitAddaUnet(LitI2IGAN):
             y_A = torch.ones_like(pred_y, requires_grad=False)
             loss_g = self.bce_logits(pred_y, y_A)
             self.log("loss_g", loss_g, prog_bar=True, logger=True)
-            print(loss_g.item())
+            print("g", loss_g.item())
             return loss_g
         else:
             raise NotImplementedError
