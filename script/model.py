@@ -319,6 +319,7 @@ class LitAddaUnet(LitI2IGAN):
         with torch.no_grad():
             tgt_A = self.G_A(src_A, layer_n = layer)
         tgt_B = self.G(src_B, layer_n = layer)
+        print(tgt_A.size(),tgt_B.size())
         # D
         if optimizer_idx == 0:
             pred_y = self.D(tgt_A)
