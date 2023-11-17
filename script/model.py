@@ -309,7 +309,7 @@ class LitAddaUnet(LitI2IGAN):
                           use_dropout=not self.hparams.no_dropout_G)
         self.G.load_state_dict(state_dict)
 
-        self.D = define_D(512, self.hparams.ndf, 'basic',
+        self.D = define_D(256, self.hparams.ndf, 'basic',
                           n_layers_D=3, norm="batch")
 
     def training_step(self, batch, batch_idx, optimizer_idx):
