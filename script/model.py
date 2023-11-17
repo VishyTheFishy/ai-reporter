@@ -309,11 +309,11 @@ class LitAddaUnet(LitI2IGAN):
                           use_dropout=not self.hparams.no_dropout_G)
         self.G.load_state_dict(state_dict)
 
-        self.D = define_D(64, self.hparams.ndf, 'basic',
+        self.D = define_D(512, self.hparams.ndf, 'basic',
                           n_layers_D=3, norm="batch")
 
     def training_step(self, batch, batch_idx, optimizer_idx):
-        layer = 1
+        layer = 7
         
         src_A, src_B = batch
         with torch.no_grad():
