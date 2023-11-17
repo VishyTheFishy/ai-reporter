@@ -313,12 +313,13 @@ class LitAddaUnet(LitI2IGAN):
                           n_layers_D=3, norm="batch")
 
     def training_step(self, batch, batch_idx, optimizer_idx):
-        layer = 7
+        layer = 3
         
         src_A, src_B = batch
         with torch.no_grad():
             tgt_A = self.G_A(src_A, layer_n = layer)
         tgt_B = self.G(src_B, layer_n = layer)
+        print(tgt_B.shape())
         # D
         if optimizer_idx == 0:
             pred_y = self.D(tgt_A)
