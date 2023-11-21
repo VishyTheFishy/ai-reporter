@@ -120,7 +120,7 @@ class LitUnalignedDM(LightningDataModule):
         transform = transforms.Compose(
             [
                 transforms.CenterCrop(out_imsize*zoom) if zoom is not None else transforms.CenterCrop(out_imsize),
-                transforms.Resize(out_imsize)
+                transforms.Resize(out_imsize),
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.5], std=[0.5]),
             ]
