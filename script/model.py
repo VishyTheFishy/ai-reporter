@@ -153,6 +153,8 @@ class LitI2IGAN(pl.LightningModule):
                             help='number of epochs with the initial learning rate')
         # parser.add_argument("--step_freq_D", type=int, default=1)
         parser.add_argument("--no_dropout_G", action='store_true')
+        parser.add_argument("--adaptation_layer", type=int, default=None)
+
 
         return parent_parser
 
@@ -287,6 +289,8 @@ class LitMSUnetGAN(LitUnetGAN):
 class LitAddaUnet(LitI2IGAN):
 
     def _init_models(self):
+        channels_dict = {1:64, 3:256, 5:512, 7:512, None:3}
+        kw_dict = {1:4, 3:4, 5:4, 7:3, None:4}
         old_dict = torch.load(self.hparams.pretrained_unet_path)
         state_dict = {}
         for key, value in old_dict.items():
@@ -309,11 +313,11 @@ class LitAddaUnet(LitI2IGAN):
                           use_dropout=not self.hparams.no_dropout_G)
         self.G.load_state_dict(state_dict)
 
-        self.D = define_D(512, self.hparams.ndf, 'basic',
-                          n_layers_D=3, norm="batch")
+        self.D = define_D(channels_dict[self.hparams.adaptation_layer], self.hparams.ndf, 'basic',
+                          n_layers_D=3, norm="batch", kw=kw_dict[self.hparams.adaptation_layer])
 
     def training_step(self, batch, batch_idx, optimizer_idx):
-        layer = 7
+        layer = self.hparams.adaptation_layer
         
         src_A, src_B = batch
         with torch.no_grad():
