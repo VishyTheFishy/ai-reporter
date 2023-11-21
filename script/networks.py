@@ -470,7 +470,7 @@ class UnetGenerator(nn.Module):
         
         conv_layers = 0
         for layer in self.model.modules():
-            if isinstance(layer, nn.Conv2d):
+            if isinstance(layer, nn.Conv2d) or isinstance(layer, nn.ConvTranspose2d):
                 conv_layers += 1
                 if conv_layers == layer_n:
                     layer.register_forward_hook(hook_fn)
