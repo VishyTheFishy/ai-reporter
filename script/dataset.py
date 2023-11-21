@@ -78,7 +78,7 @@ class UnalignedDataset(Dataset):
         return max(self.A_size, self.B_size)
 
 class LitUnalignedDM(LightningDataModule):
-    def __init__(self, src_dir, tgt_dir, out_imsize, bsize, num_workers, zoom=None **dset_kwargs):
+    def __init__(self, src_dir, tgt_dir, out_imsize, bsize, num_workers, zoom=None, **dset_kwargs):
         super().__init__()
         self.src_dir = src_dir
         self.tgt_dir = tgt_dir
