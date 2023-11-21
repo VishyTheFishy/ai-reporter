@@ -12,4 +12,4 @@ mkdir -p $LOG_DIR
 
 python train_adda.py --accelerator 'gpu' --auto_select_gpus 'True' --devices 1 \
   --data_dir_A $DIR_A --data_dir_B $DIR_B --pretrained_unet_path $UNET_PATH \
-  --save_dir $LOG_DIR --max_epochs 10 --save_every_n_epochs 5 $KWARGS
+  --save_dir $LOG_DIR --max_epochs 25 --save_every_n_epochs 5 $KWARGS
