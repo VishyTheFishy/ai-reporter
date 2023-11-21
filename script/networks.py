@@ -196,9 +196,9 @@ def define_D(input_nc, ndf, netD, n_layers_D=3, norm='batch', init_type='normal'
     norm_layer = get_norm_layer(norm_type=norm)
 
     if netD == 'basic':  # default PatchGAN classifier
-        net = NLayerDiscriminator(input_nc, ndf, n_layers=3, norm_layer=norm_layer,kw)
+        net = NLayerDiscriminator(input_nc, ndf, n_layers=3, norm_layer=norm_layer,kw=kw)
     elif netD == 'n_layers':  # more options
-        net = NLayerDiscriminator(input_nc, ndf, n_layers_D, norm_layer=norm_layer,kw)
+        net = NLayerDiscriminator(input_nc, ndf, n_layers_D, norm_layer=norm_layer,kw=kw)
     elif netD == 'pixel':     # classify if each pixel is real or fake
         net = PixelDiscriminator(input_nc, ndf, norm_layer=norm_layer)
     else:
