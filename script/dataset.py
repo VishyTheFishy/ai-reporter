@@ -20,7 +20,7 @@ PIPELINE_SETTINGS = [
     ("rotate", dict(probability=0.7, max_left_rotation=10, max_right_rotation=10))
 ]
 
-def noneTransform(x):
+def NoneTransform(x):
     return(x)
 
 class UnalignedDataset(Dataset):
