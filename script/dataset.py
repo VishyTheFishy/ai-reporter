@@ -121,7 +121,7 @@ class LitUnalignedDM(LightningDataModule):
         return dl_tst
 
 class LitAlignedDM(LightningDataModule):
-    def __init__(self, src_dir, tgt_dir, out_imsize, bsize, num_workers, **kwargs):
+    def __init__(self, src_dir, tgt_dir, out_imsize, bsize, num_workers, zoom=None, **kwargs):
         super().__init__()
         self.src_dir = src_dir
         self.tgt_dir = tgt_dir
@@ -135,7 +135,7 @@ class LitAlignedDM(LightningDataModule):
 
         # https://github.com/xuanqing94/BNNBench/blob/827dabe0a3921d76676481365704b62f19b7a820/BNNBench/data/paired_data.py#L208
         dset_trn = AugmentedData(src_trn, tgt_trn, PIPELINE_SETTINGS, 
-                                 self.out_imsize, training=True)
+                                 self.out_imsize, training=True, zoom=zoom)
         sampler_trn = RandomSampler(dset_trn)
         dl_trn = DataLoader(dset_trn, batch_size=self.bsize, sampler=sampler_trn, 
                             num_workers=self.num_workers, pin_memory=True)
@@ -148,7 +148,7 @@ class LitAlignedDM(LightningDataModule):
 
         # https://github.com/xuanqing94/BNNBench/blob/827dabe0a3921d76676481365704b62f19b7a820/BNNBench/data/paired_data.py#L208
         dset_tst = AugmentedData(src_tst, tgt_tst, PIPELINE_SETTINGS,
-                                 self.out_imsize, training=False)
+                                 self.out_imsize, training=False, zoom=zoom)
         sampler_tst = SequentialSampler(dset_tst)
         dl_tst = DataLoader(dset_tst, batch_size=self.bsize, sampler=sampler_tst, 
                             num_workers=self.num_workers, pin_memory=True)
