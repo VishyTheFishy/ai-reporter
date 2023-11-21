@@ -24,6 +24,7 @@ def parse_arguments():
     parser.add_argument("--save_every_n_epochs", type=int, default=None)
 
     parser.add_argument("--max_B_size", type=int, default=-1)
+    parser.add_argument("--zoom", type=float, default=None)
 
     parser.add_argument("--save_dir", type=str, default="./lightning_logs")
     parser.add_argument("--name", type=str, default='')
@@ -44,7 +45,8 @@ def main():
                               out_imsize=args.out_imsize, 
                               bsize=2, 
                               num_workers=args.num_workers,
-                              max_B_size=2)
+                              max_B_size=2,
+                              zoom=args.zoom)
 
     dl_train = dm_train.train_dataloader()
 
@@ -52,7 +54,8 @@ def main():
                            tgt_dir=os.path.join(args.data_dir_B,'input'),
                            out_imsize=args.out_imsize,
                            bsize=1, 
-                           num_workers=args.num_workers)
+                           num_workers=args.num_workers,
+                           zoom=args.zoom)
     dl_test = dm_test.test_dataloader()
 
     if args.save_every_n_epochs is None:
