@@ -20,6 +20,16 @@ PIPELINE_SETTINGS = [
     ("rotate", dict(probability=0.7, max_left_rotation=10, max_right_rotation=10))
 ]
 
+class NoneTransform(object):
+    """ Does nothing to the image, to be used instead of None
+    
+    Args:
+        image in, image out, nothing is done
+    """
+    def __call__(self, image):       
+        return image
+
+
 class UnalignedDataset(Dataset):
 
     def __init__(self, dir_A, dir_B, serial_batches=False, transform_A=None, transform_B=None, 
@@ -68,7 +78,7 @@ class UnalignedDataset(Dataset):
         return max(self.A_size, self.B_size)
 
 class LitUnalignedDM(LightningDataModule):
-    def __init__(self, src_dir, tgt_dir, out_imsize, bsize, num_workers, **dset_kwargs):
+    def __init__(self, src_dir, tgt_dir, out_imsize, bsize, num_workers, zoom=None **dset_kwargs):
         super().__init__()
         self.src_dir = src_dir
         self.tgt_dir = tgt_dir
@@ -76,6 +86,7 @@ class LitUnalignedDM(LightningDataModule):
         self.bsize = bsize
         self.num_workers = num_workers
         self.dset_kwargs = dset_kwargs
+        self.zoom = zoom
     
     def train_dataloader(self):
         src_trn = os.path.join(self.src_dir, 'train')
@@ -84,6 +95,7 @@ class LitUnalignedDM(LightningDataModule):
         # https://github.com/xuanqing94/BNNBench/blob/827dabe0a3921d76676481365704b62f19b7a820/BNNBench/data/paired_data.py#L136
         transform = transforms.Compose(
             [
+                transforms.RandomResizedCrop(out_imsize, scale=(zoom, zoom), ratio=(1, 1)) if self.zoom is not None else NoneTransform,
                 transforms.RandomCrop(self.out_imsize, padding=12),
                 transforms.RandomHorizontalFlip(0.5),
                 transforms.RandomVerticalFlip(0.5),
@@ -107,7 +119,8 @@ class LitUnalignedDM(LightningDataModule):
         # https://github.com/xuanqing94/BNNBench/blob/827dabe0a3921d76676481365704b62f19b7a820/BNNBench/data/paired_data.py#L151
         transform = transforms.Compose(
             [
-                transforms.CenterCrop(self.out_imsize),
+                transforms.CenterCrop(out_imsize*zoom) if zoom is not None else transforms.CenterCrop(out_imsize),
+                transforms.Resize(out_imsize)
                 transforms.ToTensor(),
                 transforms.Normalize(mean=[0.5], std=[0.5]),
             ]
@@ -128,6 +141,7 @@ class LitAlignedDM(LightningDataModule):
         self.out_imsize = out_imsize
         self.bsize = bsize
         self.num_workers = num_workers
+        self.zoom = zoom
     
     def train_dataloader(self):
         src_trn = os.path.join(self.src_dir, 'train')
@@ -135,7 +149,7 @@ class LitAlignedDM(LightningDataModule):
 
         # https://github.com/xuanqing94/BNNBench/blob/827dabe0a3921d76676481365704b62f19b7a820/BNNBench/data/paired_data.py#L208
         dset_trn = AugmentedData(src_trn, tgt_trn, PIPELINE_SETTINGS, 
-                                 self.out_imsize, training=True, zoom=zoom)
+                                 self.out_imsize, training=True, zoom=self.zoom)
         sampler_trn = RandomSampler(dset_trn)
         dl_trn = DataLoader(dset_trn, batch_size=self.bsize, sampler=sampler_trn, 
                             num_workers=self.num_workers, pin_memory=True)
@@ -148,7 +162,7 @@ class LitAlignedDM(LightningDataModule):
 
         # https://github.com/xuanqing94/BNNBench/blob/827dabe0a3921d76676481365704b62f19b7a820/BNNBench/data/paired_data.py#L208
         dset_tst = AugmentedData(src_tst, tgt_tst, PIPELINE_SETTINGS,
-                                 self.out_imsize, training=False, zoom=zoom)
+                                 self.out_imsize, training=False, zoom=self.zoom)
         sampler_tst = SequentialSampler(dset_tst)
         dl_tst = DataLoader(dset_tst, batch_size=self.bsize, sampler=sampler_tst, 
                             num_workers=self.num_workers, pin_memory=True)
