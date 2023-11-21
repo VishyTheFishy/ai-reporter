@@ -141,9 +141,7 @@ class AugmentedData(Dataset):
         super().__init__()
         self.src_dir = src_dir
         self.tgt_dir = tgt_dir
-        if training:
-            if zoom is not None:
-              
+        if training:              
             self.prep = paired_transform(
                 transforms.Compose(
                     [
