@@ -20,15 +20,8 @@ PIPELINE_SETTINGS = [
     ("rotate", dict(probability=0.7, max_left_rotation=10, max_right_rotation=10))
 ]
 
-class NoneTransform(object):
-    """ Does nothing to the image, to be used instead of None
-    
-    Args:
-        image in, image out, nothing is done
-    """
-    def __call__(self, image):       
-        return image
-
+def noneTransform(x):
+    return(x)
 
 class UnalignedDataset(Dataset):
 
