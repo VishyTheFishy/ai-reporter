@@ -463,6 +463,8 @@ class UnetGenerator(nn.Module):
         self.model = UnetSkipConnectionBlock(output_nc, ngf, input_nc=input_nc, submodule=unet_block, outermost=True, norm_layer=norm_layer, downconv_module=downconv_module)  # add the outermost layer        
     
     def forward(self, input, layer_n = None):
+        if layer_n == -1:
+            layer_n = None
         def hook_fn(module, input, output):
             self.hidden = output
         
