@@ -34,6 +34,16 @@ from tifffile import imwrite as tif_imwrite
 from torch.utils.data import DataLoader, Dataset, RandomSampler, SequentialSampler
 from torchvision.transforms.transforms import CenterCrop
 
+class NoneTransform(object):
+    """ Does nothing to the image, to be used instead of None
+    
+    Args:
+        image in, image out, nothing is done
+    """
+    def __call__(self, image):       
+        return image
+
+
 
 def read_image(img_f, autocontrast: bool, cutoff: float):
     if img_f.endswith(".tif") or img_f.endswith(".tiff"):
@@ -127,15 +137,17 @@ def paired_transform(transform_fn):
 
 
 class AugmentedData(Dataset):
-    def __init__(self, src_dir, tgt_dir, settings, out_imsize, training):
+    def __init__(self, src_dir, tgt_dir, settings, out_imsize, training, zoom=None):
         super().__init__()
         self.src_dir = src_dir
         self.tgt_dir = tgt_dir
         if training:
+            if zoom is not None:
+              
             self.prep = paired_transform(
                 transforms.Compose(
                     [
-                        # transforms.RandomResizedCrop(out_imsize, scale=(0.8, 1.2), ratio=(3./4., 4./3.)),
+                        transforms.RandomResizedCrop(out_imsize, scale=(zoom, zoom), ratio=(1, 1)) if zoom is not None else NoneTransform,
                         transforms.RandomCrop(out_imsize, padding=12),
                         transforms.RandomHorizontalFlip(0.5),
                         transforms.RandomVerticalFlip(0.5),
