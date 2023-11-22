@@ -153,6 +153,8 @@ class LitI2IGAN(pl.LightningModule):
                             help='number of epochs with the initial learning rate')
         # parser.add_argument("--step_freq_D", type=int, default=1)
         parser.add_argument("--no_dropout_G", action='store_true')
+        parser.add_argument("--generator_advantage", type=int, default=1)
+        parser.add_argument("--num_accum", type=int, default=4)
         parser.add_argument("--adaptation_layer", type=int, default=-1)
 
 
