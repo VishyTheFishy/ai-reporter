@@ -19,7 +19,6 @@ def parse_arguments():
     parser.add_argument("--data_dir_A", type=str)
     parser.add_argument("--data_dir_B", type=str)
     parser.add_argument("--bsize", type=int, default=2)
-    parser.add_argument("--accumulate_grad_batches", type=int, default=4)
     parser.add_argument("--out_imsize", type=int, default=1024)
     parser.add_argument("--num_workers", type=int, default=4)
     parser.add_argument("--save_every_n_epochs", type=int, default=None)
