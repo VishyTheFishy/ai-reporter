@@ -112,7 +112,7 @@ def main():
 
         tgt_imgs = tgt_imgs[:, mask]
         pred_imgs = pred_imgs[:, mask]
-        print(tgt_ims.shape,src_imgs.shape)
+        print(tgt_imgs.shape,src_imgs.shape)
         for pred_img, tgt_img in zip(pred_imgs, tgt_imgs):
             # c, pvalue = pearsonr(pred_img.reshape(-1), tgt_img.reshape(-1))
             c = pearson(pred_img.view(-1), tgt_img.view(-1)).item()
