@@ -66,7 +66,7 @@ def main():
     lr_monitor_callback = LearningRateMonitor(logging_interval='epoch')
     callbacks = [checkpoint_callback, lr_monitor_callback]
 
-    logger = TensorBoardLogger(save_dir=args.save_dir, name=args.name, version=args.version, accumulate_grad_batches=args.accumulate_grad_batches)
+    logger = TensorBoardLogger(save_dir=args.save_dir, name=args.name, version=args.version)
 
     trainer = pl.Trainer.from_argparse_args(args, callbacks=callbacks, logger=logger)
     trainer.fit(model=model, train_dataloaders=dl_train, val_dataloaders=dl_test)
