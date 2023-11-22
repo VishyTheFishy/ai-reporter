@@ -290,8 +290,8 @@ class LitMSUnetGAN(LitUnetGAN):
 class LitAddaUnet(LitI2IGAN):
 
     def _init_models(self):
-        channels_dict = {1:64, 3:256, 5:512, 7:512, -1:3}
-        kw_dict = {1:4, 3:4, 5:4, 7:3, -1:4}
+        channels_dict = {1:64, 3:256, 5:512, 7:512, 9:512, 11:512, 13:512, 15:128, 17:64, -1:3}
+        kw_dict = {1:4, 3:4, 5:4, 7:3, 9:3, 11:4, 13:4, 15:4, 17:4,-1:4}
         old_dict = torch.load(self.hparams.pretrained_unet_path)
         state_dict = {}
         for key, value in old_dict.items():
