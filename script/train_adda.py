@@ -18,7 +18,8 @@ def parse_arguments():
     # add PROGRAM level args
     parser.add_argument("--data_dir_A", type=str)
     parser.add_argument("--data_dir_B", type=str)
-    parser.add_argument("--bsize", type=int, default=8)
+    parser.add_argument("--bsize", type=int, default=2)
+    parser.add_argument("--accumulate_grad_batches", type=int, default=4)
     parser.add_argument("--out_imsize", type=int, default=1024)
     parser.add_argument("--num_workers", type=int, default=4)
     parser.add_argument("--save_every_n_epochs", type=int, default=None)
@@ -66,7 +67,7 @@ def main():
     lr_monitor_callback = LearningRateMonitor(logging_interval='epoch')
     callbacks = [checkpoint_callback, lr_monitor_callback]
 
-    logger = TensorBoardLogger(save_dir=args.save_dir, name=args.name, version=args.version)
+    logger = TensorBoardLogger(save_dir=args.save_dir, name=args.name, version=args.version, accumulate_grad_batches=args.accumulate_grad_batches)
 
     trainer = pl.Trainer.from_argparse_args(args, callbacks=callbacks, logger=logger)
     trainer.fit(model=model, train_dataloaders=dl_train, val_dataloaders=dl_test)
