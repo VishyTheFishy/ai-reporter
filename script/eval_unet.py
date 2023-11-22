@@ -68,15 +68,15 @@ def main():
         model = define_G(in_nc, out_nc, 64, "unet_256", norm="batch", use_dropout=False)
         state_dict = torch.load(args.ckpt_file)
         
-        if False: #args.load_from_pl:
+        if True: #args.load_from_pl:
             state_dict = state_dict["state_dict"]
             prefix = "G."
             state_dict = {k[len(prefix):]: v for k, v in state_dict.items() if k.startswith(prefix)}
-        old_dict = state_dict
-        state_dict = {}
-        for key, value in old_dict.items():
-            new_key = key.replace('module.', '')  # Remove "module." from the key
-            state_dict[new_key] = value
+            old_dict = state_dict
+            state_dict = {}
+            for key, value in old_dict.items():
+                new_key = key.replace('module.', '')  # Remove "module." from the key
+                state_dict[new_key] = value
 
         model.load_state_dict(state_dict)
     elif args.arch == 'msunet':
@@ -112,7 +112,7 @@ def main():
 
         tgt_imgs = tgt_imgs[:, mask]
         pred_imgs = pred_imgs[:, mask]
-
+        print(tgt_ims.shape,src_imgs.shape)
         for pred_img, tgt_img in zip(pred_imgs, tgt_imgs):
             # c, pvalue = pearsonr(pred_img.reshape(-1), tgt_img.reshape(-1))
             c = pearson(pred_img.view(-1), tgt_img.view(-1)).item()
