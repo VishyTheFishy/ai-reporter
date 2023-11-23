@@ -304,8 +304,6 @@ class LitAddaUnet(LitI2IGAN):
                             use_dropout=not self.hparams.no_dropout_G).eval()
         self.G_A.load_state_dict(state_dict)
 
-        for n,p in self.G_A.named_parameters():
-            print(n,p)
         for p in self.G_A.parameters():
             p.requires_grad = False
 
