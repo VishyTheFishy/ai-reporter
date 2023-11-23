@@ -1,4 +1,3 @@
-./train_adda.sh /home/vishrutsgoyal/Nucleus_MSC_20x_BF /home/vishrutsgoyal/Nucleus_MSC_20x_PC_AI log_ADDA_BFtoPC_AI_layer1 ./baseline_Nucleus_BF.ckpt '--max_epochs 15 --adaptation_layer 1 --accumulate_grad_batches 4'
 
 ./train_adda.sh /home/vishrutsgoyal/Nucleus_MSC_20x_BF /home/vishrutsgoyal/Nucleus_MSC_20x_PC_AI log_ADDA_BFtoPC_AI_layer3 ./baseline_Nucleus_BF.ckpt '--max_epochs 15 --adaptation_layer 3 --accumulate_grad_batches 4'
 
