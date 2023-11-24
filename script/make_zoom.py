@@ -3,8 +3,8 @@ import os
 
 # Create the new directory
 
-input_d = "/home/vishrutsgoyal/CD29_MSC_20x_BF"
-output_d = "/home/vishrutsgoyal/CD29_MSC_20x_BF_zoom"
+input_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_BF"
+output_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_BF_zoom"
 
 x,y = 512,512
 
