@@ -6,6 +6,7 @@ import os
 input_d = "/home/vishrutsgoyal/CD29_MSC_20x_BF"
 output_d = "/home/vishrutsgoyal/CD29_MSC_20x_BF_zoom"
 
+x,y = 512,512
 
 # Zoom factor (adjust as needed)
 zoom = 2.0  # 2.0 means 200% zoom
