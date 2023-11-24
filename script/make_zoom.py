@@ -2,34 +2,35 @@ from PIL import Image
 import os
 
 # Create the new directory
-output_directory = "zoom_CD29_MSC_20x"
-os.makedirs(output_directory, exist_ok=True)
+
+input_d = "/home/vishrutsgoyal/CD29_MSC_20x_BF"
+output_d = "/home/vishrutsgoyal/CD29_MSC_20x_BF_zoom"
+
 
 # Zoom factor (adjust as needed)
-zoom_factor = 2.0  # 2.0 means 200% zoom
+zoom = 2.0  # 2.0 means 200% zoom
 
 # Function to zoom and copy images
 def zoom_and_copy(input_path, output_path):
     with Image.open(input_path) as img:
-        # Calculate the new size after zooming
-        new_size = tuple(int(dim * zoom_factor) for dim in img.size)
-        # Resize (zoom) the image
-        zoomed_img = img.resize(new_size, Image.ANTIALIAS)
+        w, h = img.size
+        zoom2 = zoom * 2
+        img = img.crop((x - w / zoom2, y - h / zoom2, x + w / zoom2, y + h / zoom2))
+        zoomed_img = img.resize((w, h), Image.LANCZOS)
         # Save the zoomed image to the output directory
         zoomed_img.save(output_path)
 
-# Zoom and copy images from the input/train directory
-input_train_directory = "path/to/CD29_MSC_20x/input/train"
-for input_file in os.listdir(input_train_directory):
-    if input_file.endswith(".tiff"):
-        input_path = os.path.join(input_train_directory, input_file)
-        output_path = os.path.join(output_directory, input_file)
-        zoom_and_copy(input_path, output_path)
+def copy_directory(input_directory, output_directory):
+    for input_file in os.listdir(input_train_directory):
+        if input_file.endswith(".tiff"):
+            input_path = os.path.join(input_directory, input_file)
+            output_path = os.path.join(output_directory, input_file)
+            zoom_and_copy(input_path, output_path)
 
-# Zoom and copy images from the input/test directory
-input_test_directory = "path/to/CD29_MSC_20x/input/test"
-for input_file in os.listdir(input_test_directory):
-    if input_file.endswith(".tiff"):
-        input_path = os.path.join(input_test_directory, input_file)
-        output_path = os.path.join(output_directory, input_file)
-        zoom_and_copy(input_path, output_path)
+
+# Zoom and copy images from the input/train directory
+
+for partition in ["input/train", "output/train", "input/test", "output/test"]:
+    copy_directory(os.path.join(input_d,partition),os.path.join(output,partition)
+
+
