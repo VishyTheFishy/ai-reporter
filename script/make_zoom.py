@@ -22,7 +22,7 @@ def zoom_and_copy(input_path, output_path):
 
 def copy_directory(input_directory, output_directory):
     for input_file in os.listdir(input_directory):
-        if input_file.endswith(".tiff"):
+        if input_file.endswith(".tif"):
             input_path = os.path.join(input_directory, input_file)
             output_path = os.path.join(output_directory, input_file)
             zoom_and_copy(input_path, output_path)
