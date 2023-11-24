@@ -29,8 +29,8 @@ def copy_directory(input_directory, output_directory):
 
 
 # Zoom and copy images from the input/train directory
-
-for partition in ["input/train", "output/train", "input/test", "output/test"]:
+partitions = ["input/train", "output/train", "input/test", "output/test"]
+for partition in partitions:
     copy_directory(os.path.join(input_d,partition),os.path.join(output,partition)
 
 
