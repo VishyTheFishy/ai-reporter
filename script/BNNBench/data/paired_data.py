@@ -145,7 +145,7 @@ class AugmentedData(Dataset):
             self.prep = paired_transform(
                 transforms.Compose(
                     [
-                        transforms.RandomResizedCrop(out_imsize, scale=(zoom, zoom), ratio=(1, 1)) if zoom is not None else NoneTransform,
+                        #transforms.RandomResizedCrop(out_imsize, scale=(zoom, zoom), ratio=(1, 1)) if zoom is not None else NoneTransform,
                         transforms.RandomCrop(out_imsize, padding=12),
                         transforms.RandomHorizontalFlip(0.5),
                         transforms.RandomVerticalFlip(0.5),
