@@ -2,7 +2,7 @@ DATASET=$1
 TRIALS=$2
 EPOCHS=$3
 
-for trial in {0..${TRIALS}..1}
+for trial in $(seq 0 $((TRIALS-1)))
 do
 mkdir log${DATASET}${trial}
 for i in {1..16..1}
