@@ -68,15 +68,16 @@ def main():
         model = define_G(in_nc, out_nc, 64, "unet_256", norm="batch", use_dropout=False)
         state_dict = torch.load(args.ckpt_file)
         
-        if False: #args.load_from_pl:
-            state_dict = state_dict["state_dict"]
-            prefix = "G."
-            state_dict = {k[len(prefix):]: v for k, v in state_dict.items() if k.startswith(prefix)}
+        if True: #args.load_from_pl:
+            if False:
+                state_dict = state_dict["state_dict"]
+                prefix = "G."
+                state_dict = {k[len(prefix):]: v for k, v in state_dict.items() if k.startswith(prefix)}
             old_dict = state_dict
             state_dict = {}
-        for key, value in state_dict.items():
-            new_key = key.replace('module.', '')  # Remove "module." from the key
-            state_dict[new_key] = value
+            for key, value in old_dict.items():
+                new_key = key.replace('module.', '')  # Remove "module." from the key
+                state_dict[new_key] = value
 
         model.load_state_dict(state_dict)
     elif args.arch == 'msunet':
