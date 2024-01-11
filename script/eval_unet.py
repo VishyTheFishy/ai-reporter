@@ -74,9 +74,9 @@ def main():
             state_dict = {k[len(prefix):]: v for k, v in state_dict.items() if k.startswith(prefix)}
             old_dict = state_dict
             state_dict = {}
-            for key, value in old_dict.items():
-                new_key = key.replace('module.', '')  # Remove "module." from the key
-                state_dict[new_key] = value
+        for key, value in state_dict.items():
+            new_key = key.replace('module.', '')  # Remove "module." from the key
+            state_dict[new_key] = value
 
         model.load_state_dict(state_dict)
     elif args.arch == 'msunet':
