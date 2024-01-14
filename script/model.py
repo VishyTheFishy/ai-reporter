@@ -226,7 +226,13 @@ class LitUnetGAN(LitI2IGAN):
                           use_dropout=not self.hparams.no_dropout_G)
         if (self.hparams.pretrained_unet_path != 'None') and \
            (self.hparams.pretrained_unet_path is not None):
-            self.G.load_state_dict(torch.load(self.hparams.pretrained_unet_path))
+            state_dict = torch.load(self.hparams.pretrained_unet_path)
+            old_dict = state_dict
+            state_dict = {}
+            for key, value in old_dict.items():
+                new_key = key.replace('module.', '')  # Remove "module." from the key
+                state_dict[new_key] = value
+            self.G.load_state_dict(state_dict)
             print(f"Loading pretrained weight from {self.hparams.pretrained_unet_path}")
 
         self.D = define_D(self.hparams.out_nc, self.hparams.ndf, 'basic',
