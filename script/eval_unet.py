@@ -69,7 +69,7 @@ def main():
         state_dict = torch.load(args.ckpt_file)
         
         if True: #args.load_from_pl:
-            if False:
+            if True:
                 state_dict = state_dict["state_dict"]
                 prefix = "G."
                 state_dict = {k[len(prefix):]: v for k, v in state_dict.items() if k.startswith(prefix)}
