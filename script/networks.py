@@ -461,24 +461,21 @@ class UnetGenerator(nn.Module):
         unet_block = UnetSkipConnectionBlock(ngf * 2, ngf * 4, input_nc=None, submodule=unet_block, norm_layer=norm_layer, downconv_module=downconv_module)
         unet_block = UnetSkipConnectionBlock(ngf, ngf * 2, input_nc=None, submodule=unet_block, norm_layer=norm_layer, downconv_module=downconv_module)
         self.model = UnetSkipConnectionBlock(output_nc, ngf, input_nc=input_nc, submodule=unet_block, outermost=True, norm_layer=norm_layer, downconv_module=downconv_module)  # add the outermost layer        
-        self.hidden = []
     def forward(self, input, layer_n = None):
         if layer_n == -1:
             layer_n = None
         def hook_fn(module, input, output):
-            self.hidden.append(output)
+            self.hidden = output
         conv_layers = 0
         for layer in self.model.modules():
             if isinstance(layer, nn.Conv2d) or isinstance(layer, nn.ConvTranspose2d):
-                layer.register_forward_hook(hook_fn)
-                break
+                if conv_layers == layer_n:
+                    layer.register_forward_hook(hook_fn)
+                    break
+                conv_layers += 1
         out = self.model(input)
-        if layer_n == "layers":
-            return self.hidden
         if layer_n is not None:
-            print(len(self.hidden))
-            return self.hidden[layer_n]
-        
+            return self.hidden
         return out
 
 class MSUnetGenerator(UnetGenerator):
