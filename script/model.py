@@ -296,8 +296,8 @@ class LitMSUnetGAN(LitUnetGAN):
 class LitAddaUnet(LitI2IGAN):
 
     def _init_models(self):
-        channels_dict = {1:64,2:128, 3:256,4:512, 5:512,6:512, 7:512, 8:512,9:512,10:512, 11:512, 12:512, 13:256, 14:128, 15:64, 16:3, -1:3}
-        kw_dict = {1:4,2:4, 3:4,4:4, 5:4,6:3, 7:3,8:3, 9:3,10:3, 11:4,12:4, 13:4,14:4, 15:4,16:4,-1:4}
+        channels_dict = [64,128, 256,512, 512,512, 512, 512,512,512, 512, 512, 256, 128, 64, 3]
+        kw_dict = [4,4, 4,4, 4,3, 3,3, 3,3, 4,4, 4,4, 4,4}
         old_dict = torch.load(self.hparams.pretrained_unet_path)
         state_dict = {}
         for key, value in old_dict.items():
@@ -317,13 +317,16 @@ class LitAddaUnet(LitI2IGAN):
                           self.hparams.ngf, "unet_256", norm="batch", 
                           use_dropout=not self.hparams.no_dropout_G)
         self.G.load_state_dict(state_dict)
-
-        self.D = define_D(channels_dict[self.hparams.adaptation_layer], self.hparams.ndf, 'basic',
-                          n_layers_D=3, norm="batch", kw=kw_dict[self.hparams.adaptation_layer])
+        D_list = []
+        for i in range(0,16):
+            D_list.append(define_D(channels_dict[i], self.hparams.ndf, 'basic',
+                          n_layers_D=3, norm="batch", kw=kw_dict[i]))
+            
+        self.D = D_list[self.hparams.adaptation_layer]
         print("layer and channels:", self.hparams.adaptation_layer, channels_dict[self.hparams.adaptation_layer])
     def training_step(self, batch, batch_idx, optimizer_idx):
-        layer = self.hparams.adaptation_layer
-        
+        layer = np.random.randint(0,16)
+        self.D = D_list[layer]
         src_A, src_B = batch
         with torch.no_grad():
             tgt_A = self.G_A(src_A, layer_n = layer)
@@ -340,7 +343,7 @@ class LitAddaUnet(LitI2IGAN):
             loss_B = self.bce_logits(pred_y, y_B)
 
             loss_d = (loss_A + loss_B) / 2
-            self.log("loss_d", loss_d, prog_bar=True, logger=True)
+            self.log(f"loss_d:{layer}", loss_d, prog_bar=True, logger=True)
             return loss_d
         # G
         elif optimizer_idx == 1:
