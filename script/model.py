@@ -320,7 +320,7 @@ class LitAddaUnet(LitI2IGAN):
         self.D_list = []
         for i in range(0,16):
             self.D_list.append(define_D(channels_dict[i], self.hparams.ndf, 'basic',
-                          n_layers_D=3, norm="batch", kw=kw_dict[i]))
+                          n_layers_D=3, norm="batch", kw=kw_dict[i]).to("cuda))
             
         self.D = self.D_list[self.hparams.adaptation_layer]
         print("layer and channels:", self.hparams.adaptation_layer, channels_dict[self.hparams.adaptation_layer])
