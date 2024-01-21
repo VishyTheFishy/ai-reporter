@@ -322,7 +322,7 @@ class LitAddaUnet(LitI2IGAN):
             self.D_list.append(define_D(channels_dict[i], self.hparams.ndf, 'basic',
                           n_layers_D=3, norm="batch", kw=kw_dict[i]))
             
-        self.D = D_list[self.hparams.adaptation_layer]
+        self.D = self.D_list[self.hparams.adaptation_layer]
         print("layer and channels:", self.hparams.adaptation_layer, channels_dict[self.hparams.adaptation_layer])
     def training_step(self, batch, batch_idx, optimizer_idx):
         layer = np.random.randint(0,16)
