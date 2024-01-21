@@ -317,16 +317,16 @@ class LitAddaUnet(LitI2IGAN):
                           self.hparams.ngf, "unet_256", norm="batch", 
                           use_dropout=not self.hparams.no_dropout_G)
         self.G.load_state_dict(state_dict)
-        D_list = []
+        self.D_list = []
         for i in range(0,16):
-            D_list.append(define_D(channels_dict[i], self.hparams.ndf, 'basic',
+            self.D_list.append(define_D(channels_dict[i], self.hparams.ndf, 'basic',
                           n_layers_D=3, norm="batch", kw=kw_dict[i]))
             
         self.D = D_list[self.hparams.adaptation_layer]
         print("layer and channels:", self.hparams.adaptation_layer, channels_dict[self.hparams.adaptation_layer])
     def training_step(self, batch, batch_idx, optimizer_idx):
         layer = np.random.randint(0,16)
-        self.D = D_list[layer]
+        self.D = self.D_list[layer]
         src_A, src_B = batch
         with torch.no_grad():
             tgt_A = self.G_A(src_A, layer_n = layer)
