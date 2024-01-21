@@ -476,6 +476,7 @@ class UnetGenerator(nn.Module):
         if layer_n == "layers":
             return self.hidden
         if layer_n is not None:
+            print(len(hidden))
             return self.hidden[layer_n]
         
         return out
