@@ -473,8 +473,11 @@ class UnetGenerator(nn.Module):
                 layer.register_forward_hook(hook_fn)
                 break
         out = self.model(input)
+        if layer_n == "layers":
+            return self.hidden
         if layer_n is not None:
-            return self.hidden[layer_n - 1]
+            return self.hidden[layer_n]
+        
         return out
 
 class MSUnetGenerator(UnetGenerator):
