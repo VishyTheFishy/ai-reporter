@@ -293,7 +293,7 @@ class LitMSUnetGAN(LitUnetGAN):
         self.D = define_D(self.hparams.out_nc, self.hparams.ndf, 'basic',
                           n_layers_D=3, norm="batch")
 
-class LitAddaUnet(LitI2IGAN):
+class LitAddaUnet(pl.LightningModule):
 
     def _init_models(self):
         channels_dict = [64,128, 256,512, 512,512, 512, 512,512,512, 512, 512, 256, 128, 64, 3]
@@ -303,7 +303,6 @@ class LitAddaUnet(LitI2IGAN):
         for key, value in old_dict.items():
             new_key = key.replace('module.', '')  # Remove "module." from the key
             state_dict[new_key] = value
-
 
         self.G_A = define_G(self.hparams.in_nc, self.hparams.out_nc, 
                             self.hparams.ngf, "unet_256", norm="batch", 
@@ -317,42 +316,48 @@ class LitAddaUnet(LitI2IGAN):
                           self.hparams.ngf, "unet_256", norm="batch", 
                           use_dropout=not self.hparams.no_dropout_G)
         self.G.load_state_dict(state_dict)
-        self.D_list = []
-        self.D_losses = []
-        for i in range(0,16):
-            self.D_list.append(define_D(channels_dict[i], self.hparams.ndf, 'basic', n_layers_D=3, norm="batch", kw=kw_dict[i]).to("cuda"))
-            self.D_losses.append([])
+
+        self.D_list = nn.ModuleList([define_D(channels, self.hparams.ndf, 'basic', n_layers_D=3, norm="batch", kw=kw, requires_grad=True).to("cuda") for channels, kw in zip(channels_dict, kw_dict)])
+        self.D_losses = [[] for _ in range(len(self.D_list))]
         self.D = self.D_list[self.hparams.adaptation_layer]
-        print("layer and channels:", self.hparams.adaptation_layer, channels_dict[self.hparams.adaptation_layer])
+
+    def configure_optimizers(self):
+        gen_optimizer = optim.Adam(self.G.parameters(), lr=self.hparams.lr_gen)
+        disc_optimizers = [optim.Adam(D.parameters(), lr=self.hparams.lr_disc) for D in self.D_list]
+        return [gen_optimizer] + disc_optimizers
+
     def training_step(self, batch, batch_idx, optimizer_idx):
-        layer = np.random.randint(0,16)
-        self.D = self.D_list[layer]
         src_A, src_B = batch
         with torch.no_grad():
-            tgt_A = self.G_A(src_A, layer_n = layer)
-        tgt_B = self.G(src_B, layer_n = layer)
-        #print(tgt_B.shape)
+            tgt_A = self.G_A(src_A, layer_n=layer)
+        tgt_B = self.G(src_B, layer_n=layer)
         # D
-        if optimizer_idx == 0:
-            pred_y = self.D(tgt_A)
+        if optimizer_idx > 0:
+            src_A, src_B = batch
+            with torch.no_grad():
+                tgt_A = self.G_A(src_A, layer_n=(optimizer_idx-1))
+                tgt_B = self.G(src_B, layer_n=(optimizer_idx-1))
+            pred_y = self.D_list[(optimizer_idx-1)](tgt_A)
             y_A = torch.ones_like(pred_y)
             loss_A = self.bce_logits(pred_y, y_A)
-
-            pred_y = self.D(tgt_B.detach())
+    
+            pred_y = self.D_list[(optimizer_idx-1)](tgt_B)
             y_B = torch.zeros_like(pred_y)
             loss_B = self.bce_logits(pred_y, y_B)
-
+    
             loss_d = (loss_A + loss_B) / 2
             self.log(f"loss_d:{layer}", loss_d, prog_bar=True, logger=True)
-            self.D_losses[layer].append(loss_d)
+            self.D_losses[(optimizer_idx-1)].append(loss_d)
             return loss_d
+
         # G
-        elif optimizer_idx == 1:
+        elif optimizer_idx == 0:
             pred_y = self.D(tgt_B)
             y_A = torch.ones_like(pred_y, requires_grad=False)
             loss_g = self.bce_logits(pred_y, y_A)
             self.log("loss_g", loss_g, prog_bar=True, logger=True)
             return loss_g
+
         else:
             raise NotImplementedError
 
