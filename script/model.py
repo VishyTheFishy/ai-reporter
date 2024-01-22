@@ -318,10 +318,10 @@ class LitAddaUnet(LitI2IGAN):
                           use_dropout=not self.hparams.no_dropout_G)
         self.G.load_state_dict(state_dict)
         self.D_list = []
+        self.D_losses = []
         for i in range(0,16):
-            self.D_list.append(define_D(channels_dict[i], self.hparams.ndf, 'basic',
-                          n_layers_D=3, norm="batch", kw=kw_dict[i]).to("cuda"))
-            
+            self.D_list.append(define_D(channels_dict[i], self.hparams.ndf, 'basic', n_layers_D=3, norm="batch", kw=kw_dict[i]).to("cuda"))
+            self.D_losses.append([])
         self.D = self.D_list[self.hparams.adaptation_layer]
         print("layer and channels:", self.hparams.adaptation_layer, channels_dict[self.hparams.adaptation_layer])
     def training_step(self, batch, batch_idx, optimizer_idx):
@@ -344,6 +344,7 @@ class LitAddaUnet(LitI2IGAN):
 
             loss_d = (loss_A + loss_B) / 2
             self.log(f"loss_d:{layer}", loss_d, prog_bar=True, logger=True)
+            self.D_losses[layer].append(loss_d)
             return loss_d
         # G
         elif optimizer_idx == 1:
