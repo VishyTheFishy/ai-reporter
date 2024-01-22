@@ -467,22 +467,18 @@ class UnetGenerator(nn.Module):
 
     
     def forward(self, input, layer_n = None):
-        print(layer_n)
         if layer_n == -1:
             layer_n = None
         def hook_fn(module, input, output):
-            print("hook attatched")
             self.hidden = output
         conv_layers = 0
         for layer in self.model.modules():
             if isinstance(layer, nn.Conv2d) or isinstance(layer, nn.ConvTranspose2d):
                 if conv_layers == layer_n:
                     h = layer.register_forward_hook(hook_fn)
-                    print("registered")
                     break
                 conv_layers += 1
         out = self.model(input)
-        print(out.shape)
         if layer_n is not None:
             h.remove()
             return self.hidden
