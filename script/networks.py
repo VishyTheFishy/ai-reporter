@@ -464,16 +464,9 @@ class UnetGenerator(nn.Module):
         unet_block = UnetSkipConnectionBlock(ngf, ngf * 2, input_nc=None, submodule=unet_block, norm_layer=norm_layer, downconv_module=downconv_module)
         self.model = UnetSkipConnectionBlock(output_nc, ngf, input_nc=input_nc, submodule=unet_block, outermost=True, norm_layer=norm_layer, downconv_module=downconv_module)  # add the outermost layer        
 
-    def remove_all_forward_hooks(self) -> None:
-        for name, child in self._modules.items():
-            if child is not None:
-                if hasattr(child, "_forward_hooks"):
-                    child._forward_hooks: Dict[int, Callable] = OrderedDict()
-                remove_all_forward_hooks(child)
 
     
     def forward(self, input, layer_n = None):
-        self.remove_all_forward_hooks()
         print(layer_n)
         if layer_n == -1:
             layer_n = None
@@ -484,13 +477,14 @@ class UnetGenerator(nn.Module):
         for layer in self.model.modules():
             if isinstance(layer, nn.Conv2d) or isinstance(layer, nn.ConvTranspose2d):
                 if conv_layers == layer_n:
-                    layer.register_forward_hook(hook_fn)
+                    h = layer.register_forward_hook(hook_fn)
                     print("registered")
                     break
                 conv_layers += 1
         out = self.model(input)
         print(out.shape)
         if layer_n is not None:
+            h.remove()
             return self.hidden
         return out
 
