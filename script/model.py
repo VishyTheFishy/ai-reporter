@@ -296,7 +296,6 @@ class LitMSUnetGAN(LitUnetGAN):
 class LitAddaUnet(LitI2IGAN):
 
     def _init_models(self):
-        print(self.hparams)
         channels_dict = [64,128, 256,512, 512,512, 512, 512,512,512, 512, 512, 256, 128, 64, 3]
         kw_dict = [4,4, 4,4, 4,3, 3,3, 3,3, 4,4, 4,4, 4,4]
         old_dict = torch.load(self.hparams.pretrained_unet_path)
@@ -323,8 +322,8 @@ class LitAddaUnet(LitI2IGAN):
         self.D = self.D_list[self.hparams.adaptation_layer]
 
     def configure_optimizers(self):
-        gen_optimizer = optim.Adam(self.G.parameters(), lr=self.hparams.lr_gen)
-        disc_optimizers = [optim.Adam(D.parameters(), lr=self.hparams.lr_disc) for D in self.D_list]
+        gen_optimizer = optim.Adam(self.G.parameters(), lr=self.hparams.lr_G)
+        disc_optimizers = [optim.Adam(D.parameters(), lr=self.hparams.lr_D) for D in self.D_list]
         return [gen_optimizer] + disc_optimizers
 
     def training_step(self, batch, batch_idx, optimizer_idx):
