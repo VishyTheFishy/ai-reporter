@@ -349,6 +349,7 @@ class LitAddaUnet(LitI2IGAN):
 
         # G
         elif optimizer_idx == 0:
+            print(self.D_losses)
             with torch.no_grad():
                 tgt_A = self.G_A(src_A, layer_n=self.hparams.adaptation_layer)
             tgt_B = self.G(src_B, layer_n=self.hparams.adaptation_layer)
