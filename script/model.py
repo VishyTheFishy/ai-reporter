@@ -317,7 +317,7 @@ class LitAddaUnet(LitI2IGAN):
                           use_dropout=not self.hparams.no_dropout_G)
         self.G.load_state_dict(state_dict)
 
-        self.D_list = nn.ModuleList([define_D(channels, self.hparams.ndf, 'basic', n_layers_D=3, norm="batch", kw=kw, requires_grad=True).to("cuda") for channels, kw in zip(channels_dict, kw_dict)])
+        self.D_list = nn.ModuleList([define_D(channels, self.hparams.ndf, 'basic', n_layers_D=3, norm="batch", kw=kw).to("cuda") for channels, kw in zip(channels_dict, kw_dict)])
         self.D_losses = [[] for _ in range(len(self.D_list))]
         self.D = self.D_list[self.hparams.adaptation_layer]
 
@@ -328,12 +328,8 @@ class LitAddaUnet(LitI2IGAN):
 
     def training_step(self, batch, batch_idx, optimizer_idx):
         src_A, src_B = batch
-        with torch.no_grad():
-            tgt_A = self.G_A(src_A, layer_n=layer)
-        tgt_B = self.G(src_B, layer_n=layer)
         # D
         if optimizer_idx > 0:
-            src_A, src_B = batch
             with torch.no_grad():
                 tgt_A = self.G_A(src_A, layer_n=(optimizer_idx-1))
                 tgt_B = self.G(src_B, layer_n=(optimizer_idx-1))
@@ -352,6 +348,9 @@ class LitAddaUnet(LitI2IGAN):
 
         # G
         elif optimizer_idx == 0:
+            with torch.no_grad():
+                tgt_A = self.G_A(src_A, layer_n=self.hparams.adaptation_layer)
+            tgt_B = self.G(src_B, layer_n=self.hparams.adaptation_layer)
             pred_y = self.D(tgt_B)
             y_A = torch.ones_like(pred_y, requires_grad=False)
             loss_g = self.bce_logits(pred_y, y_A)
