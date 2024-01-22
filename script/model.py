@@ -293,7 +293,7 @@ class LitMSUnetGAN(LitUnetGAN):
         self.D = define_D(self.hparams.out_nc, self.hparams.ndf, 'basic',
                           n_layers_D=3, norm="batch")
 
-class LitAddaUnet(pl.LightningModule):
+class LitAddaUnet(LitI2IGAN):
 
     def _init_models(self):
         channels_dict = [64,128, 256,512, 512,512, 512, 512,512,512, 512, 512, 256, 128, 64, 3]
