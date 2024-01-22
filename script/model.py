@@ -331,7 +331,10 @@ class LitAddaUnet(LitI2IGAN):
         # D
         if optimizer_idx > 0:
             with torch.no_grad():
-                tgt_A = self.G_A(src_A, layer_n=(optimizer_idx-1))
+                if(optimizer_idx == 0):
+                    tgt_A = self.G_A(src_A, layer_n=0)
+                else:
+                    tgt_A = self.G_A(src_A, layer_n=(optimizer_idx-1))
                 print(tgt_A.shape)
                 tgt_B = self.G(src_B, layer_n=(optimizer_idx-1))
             print(optimizer_idx, tgt_A.shape, tgt_B.shape)
