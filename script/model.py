@@ -331,8 +331,8 @@ class LitAddaUnet(LitI2IGAN):
         # D
         if optimizer_idx > 0:
             with torch.no_grad():
-                tgt_A = self.G_A(src_A, layer_n=(optimizer_idx))
-                tgt_B = self.G(src_B, layer_n=(optimizer_idx))
+                tgt_A = self.G_A(src_A, layer_n=(optimizer_idx-1))
+                tgt_B = self.G(src_B, layer_n=(optimizer_idx-1))
             print(optimizer_idx, tgt_A.shape, tgt_B.shape)
             pred_y = self.D_list[(optimizer_idx-1)](tgt_A)
             y_A = torch.ones_like(pred_y)
