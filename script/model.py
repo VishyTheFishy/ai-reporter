@@ -296,6 +296,7 @@ class LitMSUnetGAN(LitUnetGAN):
 class LitAddaUnet(LitI2IGAN):
 
     def _init_models(self):
+        print(self.hparams)
         channels_dict = [64,128, 256,512, 512,512, 512, 512,512,512, 512, 512, 256, 128, 64, 3]
         kw_dict = [4,4, 4,4, 4,3, 3,3, 3,3, 4,4, 4,4, 4,4]
         old_dict = torch.load(self.hparams.pretrained_unet_path)
