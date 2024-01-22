@@ -461,7 +461,17 @@ class UnetGenerator(nn.Module):
         unet_block = UnetSkipConnectionBlock(ngf * 2, ngf * 4, input_nc=None, submodule=unet_block, norm_layer=norm_layer, downconv_module=downconv_module)
         unet_block = UnetSkipConnectionBlock(ngf, ngf * 2, input_nc=None, submodule=unet_block, norm_layer=norm_layer, downconv_module=downconv_module)
         self.model = UnetSkipConnectionBlock(output_nc, ngf, input_nc=input_nc, submodule=unet_block, outermost=True, norm_layer=norm_layer, downconv_module=downconv_module)  # add the outermost layer        
+
+    def remove_all_forward_hooks(self) -> None:
+        for name, child in self._modules.items():
+            if child is not None:
+                if hasattr(child, "_forward_hooks"):
+                    child._forward_hooks: Dict[int, Callable] = OrderedDict()
+                remove_all_forward_hooks(child)
+
+    
     def forward(self, input, layer_n = None):
+        self.remove_all_forward_hooks()
         print(layer_n)
         if layer_n == -1:
             layer_n = None
