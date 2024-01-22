@@ -333,6 +333,7 @@ class LitAddaUnet(LitI2IGAN):
             with torch.no_grad():
                 if(optimizer_idx == 1):
                     tgt_A = self.G_A(src_A, layer_n=0)
+                    print("wierd")
                 else:
                     tgt_A = self.G_A(src_A, layer_n=(optimizer_idx-1))
                 print(tgt_A.shape)
