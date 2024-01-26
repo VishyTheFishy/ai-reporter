@@ -349,9 +349,8 @@ class LitAddaUnet(LitI2IGAN):
 
         # G
         elif optimizer_idx == 0:
-            layers = (0,1,2,3,4,5,9,10,11,12,13,14,15,16)
+            layers = (0,1,2,3,4,5,9,10,11,12,13,14,15)
             layer = layers[np.random.randint(0,len(layers))]
-            print("layer:",layer)
             with torch.no_grad():
                 tgt_A = self.G_A(src_A, layer_n=layer)
             tgt_B = self.G(src_B, layer_n=layer)
