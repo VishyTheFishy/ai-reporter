@@ -349,11 +349,12 @@ class LitAddaUnet(LitI2IGAN):
 
         # G
         elif optimizer_idx == 0:
-            print(self.D_losses)
+            layers = (0,1,2,3,4,5,9,10,11,12,13,14,15,16)
+            layer = layers[np.random.randint(0,len(layers)]
             with torch.no_grad():
-                tgt_A = self.G_A(src_A, layer_n=self.hparams.adaptation_layer)
-            tgt_B = self.G(src_B, layer_n=self.hparams.adaptation_layer)
-            pred_y = self.D(tgt_B)
+                tgt_A = self.G_A(src_A, layer_n=layer)
+            tgt_B = self.G(src_B, layer_n=layer)
+            pred_y = self.D_list[layer](tgt_B)
             y_A = torch.ones_like(pred_y, requires_grad=False)
             loss_g = self.bce_logits(pred_y, y_A)
             self.log("loss_g", loss_g, prog_bar=True, logger=True)
