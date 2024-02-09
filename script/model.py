@@ -365,7 +365,6 @@ class LitAddaUnet(LitI2IGAN):
                 pred_y = self.D_list[layer](tgt_B)
                 y_A = torch.ones_like(pred_y, requires_grad=False)
                 loss_g_l = self.bce_logits(pred_y, y_A)*weight[layer]
-                print(layer, loss_g_l)
                 loss_g += loss_g_l
             self.log("loss_g", loss_g, prog_bar=True, logger=True)
             return loss_g
