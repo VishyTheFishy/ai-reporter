@@ -371,7 +371,7 @@ class LitAddaUnet(LitI2IGAN):
 
                 if True:
                     loss_g_l.backward()
-                    dg = torch.empty((0), dtype=torch.float32)
+                    dg = torch.empty((0), dtype=torch.float32).to("cuda")
                     for param in self.G.parameters():
                         if param.grad is not None:
                             dg = torch.cat((dg, (torch.flatten(param.grad))), 0) 
