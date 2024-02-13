@@ -369,11 +369,13 @@ class LitAddaUnet(LitI2IGAN):
                 y_A = torch.ones_like(pred_y, requires_grad=False)
                 loss_g_l = self.bce_logits(pred_y, y_A)
 
-                if(True):
+                if True:
                     loss_g_l.backward()
-                    dg = self.G.parameters().grad
-                    grads.append(dg)
-                    print(dg.shape)
+                    grads = []
+                    for param in self.G.parameters():
+                        if param.grad is not None:
+                            grads.append(param.grad)
+                            print(param.grad.shape)
         
                 loss_g += loss_g_l*weight[layer]
 
