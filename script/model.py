@@ -377,7 +377,7 @@ class LitAddaUnet(LitI2IGAN):
                 y_A = torch.ones_like(pred_y, requires_grad=False)
                 loss_g_l = self.bce_logits(pred_y, y_A)
 
-                if (self.num_steps - 20)%500 == 0:
+                if (self.num_steps - 2)%500 == 0:
                     loss_g_l.backward(retain_graph=True)
                     dg = []
                     for param in self.G.parameters():
