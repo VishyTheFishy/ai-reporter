@@ -322,7 +322,7 @@ class LitAddaUnet(LitI2IGAN):
         self.D_losses = [[] for _ in range(len(self.D_list))]
         self.D = self.D_list[self.hparams.adaptation_layer]
 
-    def cos_similarity(v1, v2):
+    def cos_similarity(self, v1, v2):
         v1,v2 = v1.numpy(),  v2.numpy()
         if v1.size > v2.size:
             v1 = v1[:v2.size]
