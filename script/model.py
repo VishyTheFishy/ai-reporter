@@ -375,8 +375,8 @@ class LitAddaUnet(LitI2IGAN):
                     for param in self.G.parameters():
                         if param.grad is not None:
                             dg = torch.cat((dg, (torch.flatten(param.grad))), 0) 
-                        print(dg.shape)
-                        grads.append(dg)    
+                    print(dg.shape)
+                    grads.append(dg)    
         
                 loss_g += loss_g_l*weight[layer]
 
