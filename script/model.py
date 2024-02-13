@@ -324,11 +324,6 @@ class LitAddaUnet(LitI2IGAN):
         self.num_steps = 0
 
     def cos_similarity(self, v1, v2):
-        v1,v2 = v1.cpu().numpy(),  v2.cpu().numpy()
-        if v1.size > v2.size:
-            v1 = v1[:v2.size]
-        if v1.size < v2.size:
-            v2 = v2[:v1.size]
         return(np.dot(v1,v2)/(np.linalg.norm(v1)*np.linalg.norm(v2)))
 
     def configure_optimizers(self):
