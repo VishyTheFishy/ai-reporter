@@ -371,11 +371,12 @@ class LitAddaUnet(LitI2IGAN):
 
                 if True:
                     loss_g_l.backward()
-                    grads = []
+                    dg = torch.empty((0), dtype=torch.float32)
                     for param in self.G.parameters():
                         if param.grad is not None:
-                            grads.append(param.grad)
-                            print(param.grad.shape)
+                            dg = torch.cat((dg, (torch.flatten(param.grad))), 0) 
+                        print(dg.shape)
+                        grads.append(dg)    
         
                 loss_g += loss_g_l*weight[layer]
 
