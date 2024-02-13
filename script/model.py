@@ -321,6 +321,7 @@ class LitAddaUnet(LitI2IGAN):
         self.D_list = nn.ModuleList([define_D(channels, self.hparams.ndf, 'basic', n_layers_D=3, norm="batch", kw=kw).to("cuda") for channels, kw in zip(channels_dict, kw_dict)])
         self.D_losses = [[] for _ in range(len(self.D_list))]
         self.D = self.D_list[self.hparams.adaptation_layer]
+        self.num_steps = 0
 
     def cos_similarity(self, v1, v2):
         v1,v2 = v1.cpu().numpy(),  v2.cpu().numpy()
@@ -358,6 +359,7 @@ class LitAddaUnet(LitI2IGAN):
 
         # G
         elif optimizer_idx == 0:
+            self.num_steps += 1
             layers = (0,1,2,3,4,5,9,10,11,12,13,14,15)
             weights_list = [[0.07747483149863384 ,0.0783129911313119 ,0.07831298963085628 ,0.07831297743720429 ,0.0293811130126472 ,8.221884096058708e-48 ,0.07831195880681957 ,4.422896237663228e-33 ,0.031712807498803536 ,0.07830244609273487 ,0.0783129911294682 ,0.078312991131312 ,0.078312991131312 ,0.07831299105991217 ,0.07831299113008058 ,0.07831292930890345 ,],
                            [0.007628435055044103 ,0.11118050889110241 ,0.09256125726869514 ,0.08326877561750291 ,0.00014884420004778625 ,5.1538816451499345e-09 ,0.05544475942167392 ,1.8093979138111243e-08 ,0.0001655805111525593 ,0.036584451149387166 ,0.10651626788867803 ,0.11163476816735646 ,0.11195407099742753 ,0.10095096380180218 ,0.10692842248448746 ,0.07503287129778165 ,],
@@ -375,7 +377,7 @@ class LitAddaUnet(LitI2IGAN):
                 y_A = torch.ones_like(pred_y, requires_grad=False)
                 loss_g_l = self.bce_logits(pred_y, y_A)
 
-                if True:
+                if (self.num_steps - 20)%500 == 0:
                     loss_g_l.backward(retain_graph=True)
                     dg = torch.empty((0), dtype=torch.float32).to("cuda")
                     for param in self.G.parameters():
@@ -386,7 +388,7 @@ class LitAddaUnet(LitI2IGAN):
         
                 loss_g += loss_g_l*weight[layer]
 
-            if(True):
+            if((self.num_steps - 20)%500 == 0):
                 similarity = np.ndarray((len(grad),len(grad)))
                 for i in range(0,len(grad)):
                     for j in range(0,len(grad)):
