@@ -1,5 +1,7 @@
 from argparse import ArgumentParser
 import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 import torch
 import torch.nn as nn
@@ -358,14 +360,29 @@ class LitAddaUnet(LitI2IGAN):
             weight = weights_list[self.hparams.weight_id]
             
             loss_g = 0
+            grads = []
             for layer in layers:
                 with torch.no_grad():
                     tgt_A = self.G_A(src_A, layer_n=layer)
                 tgt_B = self.G(src_B, layer_n=layer)
                 pred_y = self.D_list[layer](tgt_B)
                 y_A = torch.ones_like(pred_y, requires_grad=False)
-                loss_g_l = self.bce_logits(pred_y, y_A)*weight[layer]
-                loss_g += loss_g_l
+                loss_g_l = self.bce_logits(pred_y, y_A)
+
+                if(True):
+                    loss_g_l.backward()
+                    dg = self.G.parameters().grad
+                    grads.append(dg)
+                    print(dg.shape)
+        
+                loss_g += loss_g_l*weight[layer]
+
+            if(True):
+                vectorizer = TfidfVectorizer()
+                grad_term_matrix = vectorizer.fit_transform(grads)   
+                cosine_sim_matrix = cosine_similarity(grad_term_matrix)
+                print(cosine_sim_matrix)
+
             self.log("loss_g", loss_g, prog_bar=True, logger=True)
             return loss_g
 
