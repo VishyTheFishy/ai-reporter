@@ -1,7 +1,5 @@
 from argparse import ArgumentParser
 import numpy as np
-from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.feature_extraction.text import TfidfVectorizer
 
 import torch
 import torch.nn as nn
@@ -324,6 +322,14 @@ class LitAddaUnet(LitI2IGAN):
         self.D_losses = [[] for _ in range(len(self.D_list))]
         self.D = self.D_list[self.hparams.adaptation_layer]
 
+    def cos_similarity(v1, v2):
+        v1,v2 = v1.numpy(),  v2.numpy()
+        if v1.size > v2.size:
+            v1 = v1[:v2.size]
+        if v1.size < v2.size:
+            v2 = v2[:v1.size]
+        return(np.dot(v1,v2)/(np.linalg.norm(v1)*np.linalg.norm(v2)))
+
     def configure_optimizers(self):
         gen_optimizer = optim.Adam(self.G.parameters(), lr=self.hparams.lr_G)
         disc_optimizers = [optim.Adam(D.parameters(), lr=self.hparams.lr_D) for D in self.D_list]
@@ -381,10 +387,11 @@ class LitAddaUnet(LitI2IGAN):
                 loss_g += loss_g_l*weight[layer]
 
             if(True):
-                vectorizer = TfidfVectorizer()
-                grad_term_matrix = vectorizer.fit_transform(grads)   
-                cosine_sim_matrix = cosine_similarity(grad_term_matrix)
-                print(cosine_sim_matrix)
+                similarity = np.ndarray((len(grad),len(grad)))
+                for i in range(0,len(grad)):
+                    for j in range(0,len(grad)):
+                        similarity[i][j] = self.cos_similarity(grad[i],grad[j])
+                print(similarity)
 
             self.log("loss_g", loss_g, prog_bar=True, logger=True)
             return loss_g
