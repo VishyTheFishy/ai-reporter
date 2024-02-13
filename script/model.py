@@ -379,12 +379,14 @@ class LitAddaUnet(LitI2IGAN):
 
                 if (self.num_steps - 20)%500 == 0:
                     loss_g_l.backward(retain_graph=True)
-                    dg = torch.empty((0), dtype=torch.float32).to("cuda")
+                    dg = []
                     for param in self.G.parameters():
                         if param.grad is not None:
-                            dg = torch.cat((dg, (torch.flatten(param.grad))), 0) 
+                            grad_flat = np.array(param.grad.cpu().detach().flatten(), dtype=np.float32)
+                            dg.append(grad_flat)
+                    dg = np.concatenate(dg)
+                    grad.append(dg)
                     print(dg.shape)
-                    grad.append(dg)    
         
                 loss_g += loss_g_l*weight[layer]
 
