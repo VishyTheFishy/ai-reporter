@@ -376,7 +376,7 @@ class LitAddaUnet(LitI2IGAN):
                 loss_g_l = self.bce_logits(pred_y, y_A)
 
                 if True:
-                    loss_g_l.backward()
+                    loss_g_l.backward(retain_graph=True)
                     dg = torch.empty((0), dtype=torch.float32).to("cuda")
                     for param in self.G.parameters():
                         if param.grad is not None:
