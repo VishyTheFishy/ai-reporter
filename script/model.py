@@ -323,7 +323,7 @@ class LitAddaUnet(LitI2IGAN):
         self.D = self.D_list[self.hparams.adaptation_layer]
 
     def cos_similarity(self, v1, v2):
-        v1,v2 = v1.numpy(),  v2.numpy()
+        v1,v2 = v1.cpu().numpy(),  v2.cpu().numpy()
         if v1.size > v2.size:
             v1 = v1[:v2.size]
         if v1.size < v2.size:
