@@ -322,6 +322,8 @@ class LitAddaUnet(LitI2IGAN):
         self.D_losses = [[] for _ in range(len(self.D_list))]
         self.D = self.D_list[self.hparams.adaptation_layer]
         self.num_steps = 0
+        self.grad = [[] for _ in range(16)]
+
 
     def cos_similarity(self, v1, v2):
         return(np.dot(v1,v2)/(np.linalg.norm(v1)*np.linalg.norm(v2)))
@@ -367,7 +369,6 @@ class LitAddaUnet(LitI2IGAN):
             weight = [0,0,0 ,0 ,0,0 ,0,0,0 ,0,0 ,0 ,0 ,0,0,1,] #weights_list[self.hparams.weight_id]
             
             loss_g = 0
-            grad = [[] for _ in range(16)]
             for layer in layers:
                 with torch.no_grad():
                     tgt_A = self.G_A(src_A, layer_n=layer)
@@ -384,12 +385,12 @@ class LitAddaUnet(LitI2IGAN):
                             grad_flat = np.array(param.grad.cpu().detach().flatten(), dtype=np.float32)
                             dg.append(grad_flat)
                     dg = np.concatenate(dg)
-                    grad[layer].append(np.linalg.norm(dg))
-                if (self.num_steps > 5):
-                    print(grad)
+                    self.grad[layer].append(np.linalg.norm(dg))
         
                 loss_g += loss_g_l*weight[layer]
 
+            if (self.num_steps > 5):
+                print(self.grad)
             if False: #((self.num_steps - 2)%500 == 0):
                 similarity = np.ndarray((len(grad),len(grad)))
                 for i in range(0,len(grad)):
