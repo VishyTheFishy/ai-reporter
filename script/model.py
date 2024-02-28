@@ -389,7 +389,7 @@ class LitAddaUnet(LitI2IGAN):
         
                 loss_g += loss_g_l*weight[layer]
 
-            if (self.num_steps > 5):
+            if ((self.num_steps - 2)%500 == 0):
                 print(self.grad)
             if False: #((self.num_steps - 2)%500 == 0):
                 similarity = np.ndarray((len(grad),len(grad)))
