@@ -367,7 +367,7 @@ class LitAddaUnet(LitI2IGAN):
             weight = weights_list[self.hparams.weight_id]
             
             loss_g = 0
-            grad = []
+            grad = [[] for _ in range(15)]
             for layer in layers:
                 with torch.no_grad():
                     tgt_A = self.G_A(src_A, layer_n=layer)
@@ -385,6 +385,9 @@ class LitAddaUnet(LitI2IGAN):
                             dg.append(grad_flat)
                     dg = np.concatenate(dg)
                     print(layer, ":", np.linalg.norm(dg))
+                    grad[layer].append(np.linalg.norm(dg))
+                if (self.num_steps > 5):
+                    print(grad)
         
                 loss_g += loss_g_l*weight[layer]
 
