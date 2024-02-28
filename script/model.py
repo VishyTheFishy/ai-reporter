@@ -364,7 +364,7 @@ class LitAddaUnet(LitI2IGAN):
                             [0,0.20,0 ,0 ,0,0 ,0,0,0 ,0,0.10 ,0.24 ,0.31 ,0.06,0.10,0,],
                             [0,0.33,0 ,0 ,0,0 ,0,0,0 ,0,0 ,0.33 ,0.34 ,0,0,0,],
                            [0.077,0.077,0.077 ,0.077 ,0.077,0 ,0,0,0.077 ,0.077,.077 ,0.077 ,0.077 ,0.077,0.077,0.076,],]
-            weight = weights_list[self.hparams.weight_id]
+            weight = [0,0,0 ,0 ,0,0 ,0,0,0 ,0,0 ,0 ,0 ,0,0,1,] #weights_list[self.hparams.weight_id]
             
             loss_g = 0
             grad = [[] for _ in range(15)]
@@ -384,7 +384,6 @@ class LitAddaUnet(LitI2IGAN):
                             grad_flat = np.array(param.grad.cpu().detach().flatten(), dtype=np.float32)
                             dg.append(grad_flat)
                     dg = np.concatenate(dg)
-                    print(layer, ":", np.linalg.norm(dg))
                     grad[layer].append(np.linalg.norm(dg))
                 if (self.num_steps > 5):
                     print(grad)
