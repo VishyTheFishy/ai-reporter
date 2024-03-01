@@ -376,7 +376,7 @@ class LitAddaUnet(LitI2IGAN):
             if(self.num_steps > 1):
                 for layer in layers:
                     w.append(self.D_losses[layer][-1]/self.D_losses[-1][-1] - self.D_losses[layer][-2]/self.D_losses[-1][-2])
-                self.weights.append(.9*self.weights[-1] + .1*np.array(w))
+                self.weights.append(.9*np.array(self.weights[-1]) + .1*np.array(w))
                     
 
             self.num_steps += 1
