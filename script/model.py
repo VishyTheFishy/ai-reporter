@@ -344,31 +344,31 @@ class LitAddaUnet(LitI2IGAN):
     def configure_optimizers(self):
         gen_optimizer = optim.Adam(self.G.parameters(), lr=self.hparams.lr_G)
         disc_optimizers = [optim.Adam(D.parameters(), lr=self.hparams.lr_D) for D in self.D_list]
-        return [gen_optimizer] + disc_optimizers
+        return disc_optimizers + [gen_optimizer] 
 
     def training_step(self, batch, batch_idx, optimizer_idx):
         src_A, src_B = batch
         # D
-        if optimizer_idx > 0:
+        if optimizer_idx < len(self.D_list):
             with torch.no_grad():
-                tgt_A = self.G_A(src_A, layer_n=(optimizer_idx-1))
-                tgt_B = self.G(src_B, layer_n=(optimizer_idx-1))
+                tgt_A = self.G_A(src_A, layer_n=(optimizer_idx))
+                tgt_B = self.G(src_B, layer_n=(optimizer_idx))
 
-            pred_y = self.D_list[(optimizer_idx-1)](tgt_A)
+            pred_y = self.D_list[(optimizer_idx)](tgt_A)
             y_A = torch.ones_like(pred_y)
             loss_A = self.bce_logits(pred_y, y_A)
     
-            pred_y = self.D_list[(optimizer_idx-1)](tgt_B)
+            pred_y = self.D_list[(optimizer_idx)](tgt_B)
             y_B = torch.zeros_like(pred_y)
             loss_B = self.bce_logits(pred_y, y_B)
     
             loss_d = (loss_A + loss_B) / 2
-            self.log(f"loss_d:{optimizer_idx-1}", loss_d, prog_bar=True, logger=True)
-            self.D_losses[(optimizer_idx-1)].append(loss_d.item())
+            self.log(f"loss_d:{optimizer_idx}", loss_d, prog_bar=True, logger=True)
+            self.D_losses[(optimizer_idx)].append(loss_d.item())
             return loss_d
 
         # G
-        elif optimizer_idx == 0:
+        elif optimizer_idx == len(self.D_list):
             layers = (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)
             w = []
 
