@@ -372,13 +372,12 @@ class LitAddaUnet(LitI2IGAN):
             layers = (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)
             w = []
 
-
-            if(self.num_steps > 1):
-                for layer in layers:
-                    w.append((self.D_losses[layer][-1]/self.D_losses[-1][-1] - self.D_losses[layer][-2]/self.D_losses[-1][-2])*10)
-                self.weights.append(.9*np.array(self.weights[-1]) + .1*np.array(w))
+            if False:
+                if(self.num_steps > 1):
+                    for layer in layers:
+                        w.append((self.D_losses[layer][-1]/self.D_losses[-1][-1] - self.D_losses[layer][-2]/self.D_losses[-1][-2])*10)
+                    self.weights.append(.9*np.array(self.weights[-1]) + .1*np.array(w))
                     
-
             self.num_steps += 1
             weight = self.softmax(self.weights[-1]) #self.weights_list[self.hparams.weight_id]
 
@@ -392,7 +391,7 @@ class LitAddaUnet(LitI2IGAN):
                 y_A = torch.ones_like(pred_y, requires_grad=False)
                 loss_g_l = self.bce_logits(pred_y, y_A)
 
-                if False:#(self.num_steps - 2)%500 == 0:
+                if True:#(self.num_steps - 2)%500 == 0:
                     loss_g_l.backward(retain_graph=True)
                     dg = []
                     for param in self.G.parameters():
@@ -401,7 +400,7 @@ class LitAddaUnet(LitI2IGAN):
                             dg.append(grad_flat)
                     dg = np.concatenate(dg)
                     mag = np.linalg.norm(dg)
-                    self.grad[layer].append(mag/loss_g_l)
+                    self.grad[layer].append(mag/loss_g_l.item())
                     print(mag,loss_g_l,mag/loss_g_l)
                     
         
