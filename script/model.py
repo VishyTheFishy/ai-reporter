@@ -400,8 +400,9 @@ class LitAddaUnet(LitI2IGAN):
                             dg.append(grad_flat)
                     dg = np.concatenate(dg)
                     mag = np.linalg.norm(dg)
-                    self.grad[layer].append(mag/loss_g_l.item())
-                    print(mag,loss_g_l.item(),mag/loss_g_l.item())
+                    dloss = self.D_losses[layer][-1]
+                    self.grad[layer].append(mag/dloss)
+                    print(mag,dloss,mag/dloss)
                     
         
                 loss_g += loss_g_l*weight[layer]
