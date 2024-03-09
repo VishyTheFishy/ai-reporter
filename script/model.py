@@ -407,7 +407,7 @@ class LitAddaUnet(LitI2IGAN):
                     
         
                 loss_g += loss_g_l*weight[layer]
-            w = 100*np.array(w)/np.sum(np.array(w))
+            w = 16*np.array(w)/np.sum(np.array(w))
             self.weights.append(.95*self.weights[-1] + .05*w)
 
             if ((self.num_steps - 4)%500 == 0):
