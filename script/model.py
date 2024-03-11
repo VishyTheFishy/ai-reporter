@@ -379,7 +379,7 @@ class LitAddaUnet(LitI2IGAN):
                     self.weights.append(.9*np.array(self.weights[-1]) + .1*np.array(w))
                     
             self.num_steps += 1
-            weight = self.weights[-1]/self.weights[-1].sum() #self.weights_list[self.hparams.weight_id]
+            weight = self.weights[-1] #self.weights_list[self.hparams.weight_id]
 
             
             loss_g = 0
@@ -408,7 +408,8 @@ class LitAddaUnet(LitI2IGAN):
         
                 loss_g += loss_g_l*weight[layer]
             w = np.array(w)/np.sum(np.array(w))
-            self.weights.append(.95*self.weights[-1] + .05*w)
+            ema = .95*self.weights[-1] + .05*w
+            self.weights.append(ema/ema.sum())
 
             if ((self.num_steps - 4)%500 == 0):
                 print(self.weights)
