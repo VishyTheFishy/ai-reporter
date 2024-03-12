@@ -412,8 +412,6 @@ class LitAddaUnet(LitI2IGAN):
             
             self.weights.append(self.grads[-1]/self.losses[-1])
 
-            print(g,l,weight)
-
             if ((self.num_steps - 4)%500 == 0):
                 print(self.weights)
             if False: #((self.num_steps - 2)%500 == 0):
