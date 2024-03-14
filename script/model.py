@@ -392,10 +392,12 @@ class LitAddaUnet(LitI2IGAN):
 
                 loss_g_l.backward(retain_graph=True)
                 dg = []
+                print(layer)
                 for param in self.G.parameters():
                     if param.grad is not None:
                         grad_flat = np.array(param.grad.cpu().detach().flatten(), dtype=np.float32)
                         dg.append(grad_flat)
+                        print(np.linalg.norm(grad_flat)
                 dg = np.concatenate(dg)
                 mag = np.linalg.norm(dg)
                 dloss = self.D_losses[layer][-1]
