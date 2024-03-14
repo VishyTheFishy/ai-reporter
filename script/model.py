@@ -403,6 +403,8 @@ class LitAddaUnet(LitI2IGAN):
                 dloss = self.D_losses[layer][-1]
                 g.append(mag)
                 l.append(dloss)
+                self.G.zero_grad()
+
                     
                 loss_g += loss_g_l*weight[layer]
             
