@@ -372,6 +372,7 @@ class LitAddaUnet(LitI2IGAN):
         # G
         elif optimizer_idx == len(self.D_list):
             layers = (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)
+            parameters = (1,2,5,8,11,14,17,20,23,26,29,32,35,38,39,40)
             
             g = []
             l = []
@@ -393,11 +394,21 @@ class LitAddaUnet(LitI2IGAN):
                 loss_g_l.backward(retain_graph=True)
                 dg = []
                 print(layer)
+                gp = []
+                gl = []
                 for param in self.G.parameters():
                     if param.grad is not None:
                         grad_flat = np.array(param.grad.cpu().detach().flatten(), dtype=np.float32)
                         dg.append(grad_flat)
-                        print(np.linalg.norm(grad_flat))
+                        gp.append(np.linalg.norm(grad_flat)))
+                
+                for i in range(0,len(parameters)-1):
+                    layer_mag = 0
+                    for j in gp[parameters[i]:parameters[i+1]]:
+                        layer_mag += np.linalg.norm(j)
+                    gl.append(layer_mag)
+                print(gl)
+                
                 dg = np.concatenate(dg)
                 mag = np.linalg.norm(dg)
                 dloss = self.D_losses[layer][-1]
