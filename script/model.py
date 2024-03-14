@@ -400,7 +400,7 @@ class LitAddaUnet(LitI2IGAN):
                     if param.grad is not None:
                         grad_flat = np.array(param.grad.cpu().detach().flatten(), dtype=np.float32)
                         dg.append(grad_flat)
-                        gp.append(np.linalg.norm(grad_flat)))
+                        gp.append(np.linalg.norm(grad_flat))
                 
                 for i in range(0,len(parameters)-1):
                     layer_mag = 0
