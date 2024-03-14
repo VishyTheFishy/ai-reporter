@@ -404,9 +404,10 @@ class LitAddaUnet(LitI2IGAN):
                 
                 for i in range(0,len(parameters)-1):
                     layer_mag = 0
-                    for j in gp[parameters[i]:parameters[i+1]]:
-                        layer_mag += np.linalg.norm(j)
-                    gl.append(layer_mag)
+                    if parameters[i+1] <= len(gp):
+                        for j in gp[parameters[i]:parameters[i+1]]:
+                            layer_mag += np.linalg.norm(j)
+                            gl.append(layer_mag)
                 print(gl)
                 
                 dg = np.concatenate(dg)
