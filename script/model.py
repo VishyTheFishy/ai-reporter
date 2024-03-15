@@ -395,7 +395,7 @@ class LitAddaUnet(LitI2IGAN):
                 dg = []
                 print(layer)
                 gp = []
-                gl = []
+                gl = [0]
                 for param in self.G.parameters():
                     if param.grad is not None:
                         grad_flat = np.array(param.grad.cpu().detach().flatten(), dtype=np.float32)
