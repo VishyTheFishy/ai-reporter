@@ -323,7 +323,7 @@ class LitAddaUnet(LitI2IGAN):
         self.D = self.D_list[self.hparams.adaptation_layer]
         self.num_steps = 0
 
-        self.weights = [np.array([1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1])]
+        self.weights = [np.array([.01,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])]
         self.grads = [np.array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])]
         self.losses = [np.array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])]
 
@@ -393,7 +393,6 @@ class LitAddaUnet(LitI2IGAN):
 
                 loss_g_l.backward(retain_graph=True)
                 dg = []
-                print(layer)
                 gp = []
                 gl = [0]
                 for param in self.G.parameters():
