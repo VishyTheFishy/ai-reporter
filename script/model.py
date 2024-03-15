@@ -429,7 +429,7 @@ class LitAddaUnet(LitI2IGAN):
             self.losses.append(.8*self.losses[-1] + .2*l)
             
             #self.weights.append(self.grads[-1]/self.losses[-1])
-            self.weights.append(.9*self.weights[-1]+.1*w)
+            self.weights.append(.9*self.weights[-1]+.1*np.array(w))
 
             if ((self.num_steps - 4)%500 == 0):
                 print(self.weights)
