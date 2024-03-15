@@ -408,7 +408,9 @@ class LitAddaUnet(LitI2IGAN):
                         for j in gp[parameters[i]:parameters[i+1]]:
                             layer_mag += np.linalg.norm(j)
                         gl.append(layer_mag)
-                print(gl)
+                if layer == layers[-1]:
+                    print(gl)
+                    w = gl
                 
                 dg = np.concatenate(dg)
                 mag = np.linalg.norm(dg)
@@ -426,7 +428,8 @@ class LitAddaUnet(LitI2IGAN):
             self.grads.append(.8*self.grads[-1] + .2*g)
             self.losses.append(.8*self.losses[-1] + .2*l)
             
-            self.weights.append(self.grads[-1]/self.losses[-1])
+            #self.weights.append(self.grads[-1]/self.losses[-1])
+            self.weights.append(.9*self.weights[-1]+.1*w)
 
             if ((self.num_steps - 4)%500 == 0):
                 print(self.weights)
