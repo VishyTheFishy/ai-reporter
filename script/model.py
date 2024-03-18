@@ -331,10 +331,7 @@ class LitAddaUnet(LitI2IGAN):
                     [0.007628435055044103 ,0.11118050889110241 ,0.09256125726869514 ,0.08326877561750291 ,0.00014884420004778625 ,0 ,0.05544475942167392 ,0 ,0.0001655805111525593 ,0.036584451149387166 ,0.10651626788867803 ,0.11163476816735646 ,0.11195407099742753 ,0.10095096380180218 ,0.10692842248448746 ,0.07503287129778165 ,],
                     [4.6961623089611685e-05 ,0.18874584701244707 ,0.028732142936136903 ,0.016155359619449097 ,3.211113312586784e-07 ,8.841386766024644e-11 ,0.0033630477292582468 ,2.0289909936487102e-10 ,3.5876733133113703e-07 ,0.0010439219441199278 ,0.08950237694730846 ,0.22129654694312825 ,0.29429847239147083 ,0.052921038028376687 ,0.09381826554897117 ,0.010075339106268288 ,],
                     [0,0,0 ,0 ,0,0 ,0,0,0 ,0,0 ,0 ,1 ,0,0,0,],
-                    [0,0,0 ,0 ,0,0 ,0,0,0 ,0,0 ,0 ,0.9 ,0,0,0,],
-                    [0,0.20,0 ,0 ,0,0 ,0,0,0 ,0,0.10 ,0.24 ,0.31 ,0.06,0.10,0,],
-                    [0,0.33,0 ,0 ,0,0 ,0,0,0 ,0,0 ,0.33 ,0.34 ,0,0,0,],
-                   [0.077,0.077,0.077 ,0.077 ,0.077,0 ,0,0,0.077 ,0.077,.077 ,0.077 ,0.077 ,0.077,0.077,0.076,],]
+                    [0,0,0.1 ,0 ,0,0 ,0,0,0 ,0,0 ,0 ,0.9 ,0,0,0,],]
 
 
     def softmax(self, x):
@@ -383,6 +380,7 @@ class LitAddaUnet(LitI2IGAN):
 
             
             loss_g = 0
+            scale = np.ones(len(layers))
             for layer in layers:
                 with torch.no_grad():
                     tgt_A = self.G_A(src_A, layer_n=layer)
@@ -395,6 +393,7 @@ class LitAddaUnet(LitI2IGAN):
                 dg = []
                 gp = []
                 gl = []
+                
                 for param in self.G.parameters():
                     if param.grad is not None:
                         grad_flat = np.array(param.grad.cpu().detach().flatten(), dtype=np.float32)
@@ -407,10 +406,12 @@ class LitAddaUnet(LitI2IGAN):
                         for j in gp[parameters[i]:parameters[i+1]]:
                             layer_mag += np.linalg.norm(j)
                         gl.append(layer_mag)
+                scale[layer] = gl[layer]
                 if layer == layers[-1]:
-                    w = gl
+                    w = np.array(gl)
                 print(layer)
                 print(gl)
+                print(w/scale)
                 dg = np.concatenate(dg)
                 mag = np.linalg.norm(dg)
                 dloss = self.D_losses[layer][-1]
@@ -429,7 +430,7 @@ class LitAddaUnet(LitI2IGAN):
             
             #self.weights.append(self.grads[-1]/self.losses[-1])
             
-            self.weights.append(.9*self.weights[-1]+.1*np.array(w))
+            self.weights.append(.9*self.weights[-1]+.1*w)
 
             if ((self.num_steps - 4)%500 == 0):
                 print(self.weights)
