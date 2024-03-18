@@ -379,7 +379,7 @@ class LitAddaUnet(LitI2IGAN):
             
             weight = self.weights[-1]/self.weights[-1].sum() #self.weights_list[self.hparams.weight_id]
             loss_g = 0
-            #scale = np.ones(len(layers))
+            scale = np.ones(len(layers))
             for layer in layers:
                 with torch.no_grad():
                     tgt_A = self.G_A(src_A, layer_n=layer)
@@ -408,10 +408,10 @@ class LitAddaUnet(LitI2IGAN):
                 
                 print(layer)
                 print(gl)
-                #scale[layer] = gl[layer]
+                scale[layer] = gl[layer]
                 if layer == layers[-1]:
                     w = gl
-                #print(gl/scale)
+                print(gl/scale)
                 dg = np.concatenate(dg)
                 mag = np.linalg.norm(dg)
                 dloss = self.D_losses[layer][-1]
