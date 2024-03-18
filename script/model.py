@@ -409,7 +409,7 @@ class LitAddaUnet(LitI2IGAN):
                 
                 print(layer)
                 print(gl)
-                scale[layer] = gl[layer]
+                #scale[layer] = gl[layer]
                 gl = np.array(gl)
                 if layer == layers[-1]:
                     w = gl
