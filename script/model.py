@@ -408,6 +408,7 @@ class LitAddaUnet(LitI2IGAN):
                 
                 print(layer)
                 print(gl)
+                print(scale)
                 scale[layer] = gl[layer]
                 if layer == layers[-1]:
                     w = gl
