@@ -376,9 +376,8 @@ class LitAddaUnet(LitI2IGAN):
 
                     
             self.num_steps += 1
-            weight = self.weights[-1]/self.weights[-1].sum() #self.weights_list[self.hparams.weight_id]
-
             
+            weight = self.weights[-1]/self.weights[-1].sum() #self.weights_list[self.hparams.weight_id]
             loss_g = 0
             #scale = np.ones(len(layers))
             for layer in layers:
@@ -392,7 +391,7 @@ class LitAddaUnet(LitI2IGAN):
                 loss_g_l.backward(retain_graph=True)
                 dg = []
                 gp = []
-                gl = []
+                gl = np.zeros(len(layers))
                 
                 for param in self.G.parameters():
                     if param.grad is not None:
@@ -405,12 +404,11 @@ class LitAddaUnet(LitI2IGAN):
                     if parameters[i+1] <= len(gp):
                         for j in gp[parameters[i]:parameters[i+1]]:
                             layer_mag += np.linalg.norm(j)
-                        gl.append(layer_mag)
+                        gl[i] = layer_mag
                 
                 print(layer)
                 print(gl)
                 #scale[layer] = gl[layer]
-                gl = np.array(gl)
                 if layer == layers[-1]:
                     w = gl
                 #print(gl/scale)
