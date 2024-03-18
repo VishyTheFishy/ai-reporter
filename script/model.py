@@ -406,12 +406,12 @@ class LitAddaUnet(LitI2IGAN):
                             layer_mag += np.linalg.norm(j)
                         gl[i] = layer_mag
                 
-                print(layer)
-                print(gl)
-                print(scale)
                 scale[layer] = gl[layer]
                 if layer == layers[-1]:
                     w = gl
+                print(layer)
+                print(gl)
+                print(scale)
                 print(gl/scale)
                 dg = np.concatenate(dg)
                 mag = np.linalg.norm(dg)
