@@ -407,11 +407,12 @@ class LitAddaUnet(LitI2IGAN):
                             layer_mag += np.linalg.norm(j)
                         gl.append(layer_mag)
                 scale[layer] = gl[layer]
+                gl = np.array(gl)
                 if layer == layers[-1]:
-                    w = np.array(gl)
+                    w = gl
                 print(layer)
                 print(gl)
-                print(w/scale)
+                print(gl/scale)
                 dg = np.concatenate(dg)
                 mag = np.linalg.norm(dg)
                 dloss = self.D_losses[layer][-1]
