@@ -376,10 +376,10 @@ class LitAddaUnet(LitI2IGAN):
                     
             self.num_steps += 1
 
-            self.weights_list[self.hparams.weight_id]
+            weight = self.weights_list[self.hparams.weight_id]
             #weight = self.weights[-1]/self.weights[-1].sum() 
             loss_g = 0
-            scale = np.ones(len(layers))
+            #scale = np.ones(len(layers))
             for layer in layers:
                 with torch.no_grad():
                     tgt_A = self.G_A(src_A, layer_n=layer)
@@ -388,7 +388,7 @@ class LitAddaUnet(LitI2IGAN):
                 y_A = torch.ones_like(pred_y, requires_grad=False)
                 loss_g_l = self.bce_logits(pred_y, y_A)
 
-                loss_g_l.backward(retain_graph=True)
+                """loss_g_l.backward(retain_graph=True)
                 dg = []
                 gp = []
                 gl = np.zeros(len(layers))
@@ -418,12 +418,12 @@ class LitAddaUnet(LitI2IGAN):
                 dloss = self.D_losses[layer][-1]
                 g.append(mag)
                 l.append(dloss)
-                self.G.zero_grad()
+                self.G.zero_grad()"""
 
                     
                 loss_g += loss_g_l*weight[layer]
             
-            g = np.array(g)
+            """g = np.array(g)
             l = np.array(l)
 
             self.grads.append(.8*self.grads[-1] + .2*g)
@@ -440,7 +440,7 @@ class LitAddaUnet(LitI2IGAN):
                 for i in range(0,len(grad)):
                     for j in range(0,len(grad)):
                         similarity[i][j] = self.cos_similarity(grad[i],grad[j])
-                print(similarity)
+                print(similarity)"""
 
             self.log("loss_g", loss_g, prog_bar=True, logger=True)
             return loss_g
