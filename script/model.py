@@ -425,8 +425,8 @@ class LitAddaUnet(LitI2IGAN):
             g = np.array(g)
             l = np.array(l)
 
-            self.grads.append(.8*self.grads[-1] + .2*g)
-            self.losses.append(.8*self.losses[-1] + .2*l)
+            #self.grads.append(.8*self.grads[-1] + .2*g)
+            #self.losses.append(.8*self.losses[-1] + .2*l)
             
             #self.weights.append(self.grads[-1]/self.losses[-1])
             
