@@ -378,6 +378,7 @@ class LitAddaUnet(LitI2IGAN):
 
             #weight = self.weights_list[self.hparams.weight_id]
             weight = self.weights[-1]/self.weights[-1].sum() 
+            w = weight
             loss_g = 0
             scale = np.ones(len(layers))
             for layer in layers:
