@@ -411,8 +411,6 @@ class LitAddaUnet(LitI2IGAN):
                     scale[layer] = gl[layer]
                     if layer == layers[-1]:
                         w = gl/scale
-                    print(layer)
-                    print(gl/scale)
                     dg = np.concatenate(dg)
                     mag = np.linalg.norm(dg)
                     dloss = self.D_losses[layer][-1]
