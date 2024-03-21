@@ -368,7 +368,7 @@ class LitAddaUnet(LitI2IGAN):
         # G
         elif optimizer_idx == len(self.D_list):
             layers = (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)
-            parameters = (0,1,4,7,10,13,16,19,22,25,28,31,34,37,38,39,40)
+            parameters = (0,1,2,5,8,11,14,17,20,23,26,29,32,35,38,39,40)
             
             g = []
             l = []
