@@ -387,38 +387,39 @@ class LitAddaUnet(LitI2IGAN):
                 pred_y = self.D_list[layer](tgt_B)
                 y_A = torch.ones_like(pred_y, requires_grad=False)
                 loss_g_l = self.bce_logits(pred_y, y_A)
-
-                loss_g_l.backward(retain_graph=True)
-                dg = []
-                gp = []
-                gl = np.zeros(len(layers))
                 
-                for param in self.G.parameters():
-                    if param.grad is not None:
-                        grad_flat = np.array(param.grad.cpu().detach().flatten(), dtype=np.float32)
-                        dg.append(grad_flat)
-                        gp.append(np.linalg.norm(grad_flat))
-                
-                for i in range(0,len(parameters)-1):
-                    layer_mag = 0
-                    if parameters[i+1] <= len(gp):
-                        for j in gp[parameters[i]:parameters[i+1]]:
-                            layer_mag += np.linalg.norm(j)
-                        gl[i] = layer_mag
-                
-                scale[layer] = gl[layer]
-                if layer == layers[-1]:
-                    w = gl
-                print(layer)
-                print(gl)
-                print(scale)
-                print(gl/scale)
-                dg = np.concatenate(dg)
-                mag = np.linalg.norm(dg)
-                dloss = self.D_losses[layer][-1]
-                g.append(mag)
-                l.append(dloss)
-                self.G.zero_grad()
+                if (num_steps > 1):
+                    loss_g_l.backward(retain_graph=True)
+                    dg = []
+                    gp = []
+                    gl = np.zeros(len(layers))
+                    
+                    for param in self.G.parameters():
+                        if param.grad is not None:
+                            grad_flat = np.array(param.grad.cpu().detach().flatten(), dtype=np.float32)
+                            dg.append(grad_flat)
+                            gp.append(np.linalg.norm(grad_flat))
+                    
+                    for i in range(0,len(parameters)-1):
+                        layer_mag = 0
+                        if parameters[i+1] <= len(gp):
+                            for j in gp[parameters[i]:parameters[i+1]]:
+                                layer_mag += np.linalg.norm(j)
+                            gl[i] = layer_mag
+                    
+                    scale[layer] = gl[layer]
+                    if layer == layers[-1]:
+                        w = gl
+                    print(layer)
+                    print(gl)
+                    print(scale)
+                    print(gl/scale)
+                    dg = np.concatenate(dg)
+                    mag = np.linalg.norm(dg)
+                    dloss = self.D_losses[layer][-1]
+                    g.append(mag)
+                    l.append(dloss)
+                    self.G.zero_grad()
 
                     
                 loss_g += loss_g_l*weight[layer]
