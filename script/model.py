@@ -388,7 +388,7 @@ class LitAddaUnet(LitI2IGAN):
                 y_A = torch.ones_like(pred_y, requires_grad=False)
                 loss_g_l = self.bce_logits(pred_y, y_A)
                 
-                if (num_steps > 1):
+                if (self.num_steps > 1):
                     loss_g_l.backward(retain_graph=True)
                     dg = []
                     gp = []
@@ -409,10 +409,8 @@ class LitAddaUnet(LitI2IGAN):
                     
                     scale[layer] = gl[layer]
                     if layer == layers[-1]:
-                        w = gl
+                        w = gl/scale
                     print(layer)
-                    print(gl)
-                    print(scale)
                     print(gl/scale)
                     dg = np.concatenate(dg)
                     mag = np.linalg.norm(dg)
