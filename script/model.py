@@ -437,9 +437,9 @@ class LitAddaUnet(LitI2IGAN):
             
             #self.weights.append(.9*self.weights[-1]+.1*w)
 
-            if ((self.num_steps - 4)%500 == 0):
-                print(self.weights)
-            if ((self.num_steps - 3)%500 == 0):
+            #if ((self.num_steps - 4)%500 == 0):
+             #   print(self.weights)
+            if ((self.num_steps - 3)%100 == 0):
                 sim = []
                 for i in range(0,len(grad_layers)):
                         sim.append(self.cos_similarity(grad_layers[i],grad_finals[i]))
