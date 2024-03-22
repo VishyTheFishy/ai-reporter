@@ -379,7 +379,6 @@ class LitAddaUnet(LitI2IGAN):
             self.num_steps += 1
 
             weight = self.weights_list[self.hparams.weight_id]
-            print(weight)
             #weight = self.weights[-1]/self.weights[-1].sum() 
             w = weight
             loss_g = 0
@@ -406,9 +405,9 @@ class LitAddaUnet(LitI2IGAN):
                             gp.append(np.linalg.norm(grad_flat))
                     for i in range(0,len(parameters)-1):
                         if (i == layer):
-                            grad_layers.append(numpy.concatenate(dg[parameters[i]:parameters[i+1]]))
+                            grad_layers.append(np.concatenate(dg[parameters[i]:parameters[i+1]]))
                         if (layer == 15):
-                            grad_finals.append(numpy.concatenate(dg[parameters[i]:parameters[i+1]]))
+                            grad_finals.append(np.concatenate(dg[parameters[i]:parameters[i+1]]))
                             
                         layer_mag = 0
                         if parameters[i+1] <= len(gp):
