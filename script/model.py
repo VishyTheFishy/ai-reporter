@@ -407,7 +407,7 @@ class LitAddaUnet(LitI2IGAN):
                     for i in range(0,len(parameters)-1):
                         if (i == layer):
                             grad_layers.append(numpy.concatenate(dg[parameters[i]:parameters[i+1]]))
-                        if (layer == 15)
+                        if (layer == 15):
                             grad_finals.append(numpy.concatenate(dg[parameters[i]:parameters[i+1]]))
                             
                         layer_mag = 0
