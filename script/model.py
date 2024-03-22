@@ -372,6 +372,9 @@ class LitAddaUnet(LitI2IGAN):
             g = []
             l = []
 
+            grad_layers = []
+            grad_finals = []
+
                     
             self.num_steps += 1
 
@@ -390,7 +393,7 @@ class LitAddaUnet(LitI2IGAN):
                 loss_g_l = self.bce_logits(pred_y, y_A)
                 loss_g += loss_g_l*weight[layer]
 
-                """if (self.num_steps > 1):
+                if (self.num_steps > 1):
                     loss_g_l.backward(retain_graph=True)
                     dg = []
                     gp = []
@@ -401,8 +404,12 @@ class LitAddaUnet(LitI2IGAN):
                             grad_flat = np.array(param.grad.cpu().detach().flatten(), dtype=np.float32)
                             dg.append(grad_flat)
                             gp.append(np.linalg.norm(grad_flat))
-                    
                     for i in range(0,len(parameters)-1):
+                        if (i == layer):
+                            grad_layers.append(numpy.concatenate(dg[parameters[i]:parameters[i+1]]))
+                        if (layer == 15)
+                            grad_finals.append(numpy.concatenate(dg[parameters[i]:parameters[i+1]]))
+                            
                         layer_mag = 0
                         if parameters[i+1] <= len(gp):
                             for j in gp[parameters[i]:parameters[i+1]]:
@@ -429,16 +436,15 @@ class LitAddaUnet(LitI2IGAN):
             
             #self.weights.append(self.grads[-1]/self.losses[-1])
             
-            self.weights.append(.9*self.weights[-1]+.1*w)
+            #self.weights.append(.9*self.weights[-1]+.1*w)
 
             if ((self.num_steps - 4)%500 == 0):
                 print(self.weights)
-            if False: #((self.num_steps - 2)%500 == 0):
-                similarity = np.ndarray((len(grad),len(grad)))
-                for i in range(0,len(grad)):
-                    for j in range(0,len(grad)):
-                        similarity[i][j] = self.cos_similarity(grad[i],grad[j])
-                print(similarity)"""
+            if ((self.num_steps - 3)%500 == 0):
+                sim = []
+                for i in range(0,len(grad_layers)):
+                        similarity.append(self.cos_similarity(grad_layers[i],grad_finals[i])
+                print(similarity)
 
             self.log("loss_g", loss_g, prog_bar=True, logger=True)
             return loss_g
