@@ -442,8 +442,8 @@ class LitAddaUnet(LitI2IGAN):
             if ((self.num_steps - 3)%500 == 0):
                 sim = []
                 for i in range(0,len(grad_layers)):
-                        similarity.append(self.cos_similarity(grad_layers[i],grad_finals[i]))
-                print(similarity)
+                        sim.append(self.cos_similarity(grad_layers[i],grad_finals[i]))
+                print(sim)
 
             self.log("loss_g", loss_g, prog_bar=True, logger=True)
             return loss_g
