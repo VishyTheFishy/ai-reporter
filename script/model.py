@@ -330,6 +330,8 @@ class LitAddaUnet(LitI2IGAN):
         self.weights_list = [
                     [0,0,0 ,0 ,0,0 ,0,0,0 ,0,0 ,0 ,1 ,0,0,0,],
                     [0,0.2,0 ,0 ,0,0 ,0,0,0 ,0,0 ,0 ,0.8 ,0,0,0,],]
+        self.g_finals = []
+        self.g_layers = []
 
 
     def softmax(self, x):
@@ -384,8 +386,6 @@ class LitAddaUnet(LitI2IGAN):
             loss_g = 0
             scale = np.ones(len(layers))
             for layer in layers:
-                with torch.no_grad():
-                    tgt_A = self.G_A(src_A, layer_n=layer)
                 tgt_B = self.G(src_B, layer_n=layer)
                 pred_y = self.D_list[layer](tgt_B)
                 y_A = torch.ones_like(pred_y, requires_grad=False)
@@ -415,20 +415,31 @@ class LitAddaUnet(LitI2IGAN):
                                 layer_mag += np.linalg.norm(j)
                             gl[i] = layer_mag
                     
-                    scale[layer] = gl[layer]
+                    """scale[layer] = gl[layer]
                     if layer == layers[-1]:
                         w = gl/scale
                     dg = np.concatenate(dg)
                     mag = np.linalg.norm(dg)
                     dloss = self.D_losses[layer][-1]
                     g.append(mag)
-                    l.append(dloss)
+                    l.append(dloss)"""
+                    
                     self.G.zero_grad()
 
                     
             
             g = np.array(g)
             l = np.array(l)
+            
+            if len(self.grad_layers) == 0:
+                self.grad_layers = grad_layers
+                self.grad_finals = grad_finals
+            else:
+                for i in range(0,len(grad_layers)):
+                    self.grad_layers[i] += grad_layers[i]
+                    self.grad_finals[i] += grad_finals[i]
+                
+                    
 
             #self.grads.append(.8*self.grads[-1] + .2*g)
             #self.losses.append(.8*self.losses[-1] + .2*l)
@@ -439,11 +450,14 @@ class LitAddaUnet(LitI2IGAN):
 
             #if ((self.num_steps - 4)%500 == 0):
              #   print(self.weights)
-            if ((self.num_steps - 3)%100 == 0):
+            
+            if ((self.num_steps - 3)%5 == 0):
                 sim = []
                 for i in range(0,len(grad_layers)):
-                        sim.append(self.cos_similarity(grad_layers[i],grad_finals[i]))
+                        sim.append(self.cos_similarity(self.grad_layers[i],self.grad_finals[i]))
                 print(sim)
+                self.grad_layers = []
+                self.grad_finals = []
 
             self.log("loss_g", loss_g, prog_bar=True, logger=True)
             return loss_g
