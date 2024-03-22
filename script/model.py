@@ -330,8 +330,8 @@ class LitAddaUnet(LitI2IGAN):
         self.weights_list = [
                     [0,0,0 ,0 ,0,0 ,0,0,0 ,0,0 ,0 ,1 ,0,0,0,],
                     [0,0.2,0 ,0 ,0,0 ,0,0,0 ,0,0 ,0 ,0.8 ,0,0,0,],]
-        self.g_finals = []
-        self.g_layers = []
+        self.grad_finals = []
+        self.grad_layers = []
 
 
     def softmax(self, x):
