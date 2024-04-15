@@ -294,6 +294,34 @@ class LitMSUnetGAN(LitUnetGAN):
         self.D = define_D(self.hparams.out_nc, self.hparams.ndf, 'basic',
                           n_layers_D=3, norm="batch")
 
+
+
+class LitTransferUnet(LitI2IGAN):
+    def _init_models(self):
+        state_dict = {}
+        for key, value in old_dict.items():
+            new_key = key.replace('module.', '')  # Remove "module." from the key
+            state_dict[new_key] = value
+        self.G_A = define_G(self.hparams.in_nc, self.hparams.out_nc, 
+                            self.hparams.ngf, "unet_256", norm="batch", 
+                            use_dropout=not self.hparams.no_dropout_G).eval()
+        self.G_transfer = define_G(self.hparams.in_nc, self.hparams.out_nc, 
+                    self.hparams.ngf, "unet_256", norm="batch", 
+                    use_dropout=not self.hparams.no_dropout_G).eval()
+
+        for p in self.G_A.parameters():
+            p.requires_grad = False
+    
+    
+    def training_step(self, batch, batch_idx, optimizer_idx):
+        src_A, src_B = batch
+        embed_A = self.G_A(src_A, layer_n=self.hparams.adaptation_layer)
+        embed_B = self.G(src_B, layer_n=self.hparams.adaptation_layer)
+
+
+
+
+
 class LitAddaUnet(LitI2IGAN):
 
     def _init_models(self):
