@@ -302,21 +302,43 @@ class LitTransferUnet(LitI2IGAN):
         for key, value in old_dict.items():
             new_key = key.replace('module.', '')  # Remove "module." from the key
             state_dict[new_key] = value
+        
         self.G_A = define_G(self.hparams.in_nc, self.hparams.out_nc, 
                             self.hparams.ngf, "unet_256", norm="batch", 
                             use_dropout=not self.hparams.no_dropout_G).eval()
+        self.G_A.load_state_dict(state_dict)
+        for p in self.G_A.parameters():
+            p.requires_grad = False
+
         self.G_transfer = define_G(self.hparams.in_nc, self.hparams.out_nc, 
                     self.hparams.ngf, "unet_256", norm="batch", 
                     use_dropout=not self.hparams.no_dropout_G).eval()
+        self.G_transfer.load_state_dict(state_dict)
+    
+    
+    def configure_optimizers(self):
+        opt_G = optim.AdamW(self.G_transfer.parameters(), lr=self.hparams.lr_G, 
+                            betas=(self.hparams.b1_G, self.hparams.b2_G),
+                            weight_decay=self.hparams.weight_decay_G)
 
-        for p in self.G_A.parameters():
-            p.requires_grad = False
-    
-    
+        def lambda_rule(epoch):
+            n_epochs_decay = float(100 - self.hparams.n_epochs_const + 1) #self.hparams.max_epochs
+            lr_l = 1.0 - max(0, epoch - self.hparams.n_epochs_const) / n_epochs_decay
+            return lr_l
+
+        sch_G = lr_scheduler.LambdaLR(opt_G, lr_lambda=lambda_rule)
+
+        return opt_G, sch_G
+
     def training_step(self, batch, batch_idx, optimizer_idx):
         src_A, src_B = batch
+        
         embed_A = self.G_A(src_A, layer_n=self.hparams.adaptation_layer)
         embed_B = self.G(src_B, layer_n=self.hparams.adaptation_layer)
+
+        loss = nn.MSELoss()
+
+        return(loss(embed_A, embed_B))
 
 
 
