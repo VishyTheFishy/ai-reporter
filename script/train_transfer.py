@@ -51,26 +51,8 @@ def main():
 
     dl_train = dm_train.train_dataloader()
 
-    dm_test = LitAlignedDM(src_dir=os.path.join(args.data_dir_B,'input'),
-                           tgt_dir=os.path.join(args.data_dir_B,'input'),
-                           out_imsize=args.out_imsize,
-                           bsize=args.bsize, 
-                           num_workers=args.num_workers,
-                           zoom=args.zoom)
-    dl_test = dm_test.test_dataloader()
-
-    if args.save_every_n_epochs is None:
-        checkpoint_callback = ModelCheckpoint(monitor='pearson_val', mode='max', save_last=True)
-    else:
-        checkpoint_callback = ModelCheckpoint(
-                every_n_epochs=args.save_every_n_epochs, save_top_k=-1, save_last=True)
-    lr_monitor_callback = LearningRateMonitor(logging_interval='epoch')
-    callbacks = [checkpoint_callback, lr_monitor_callback]
-
-    logger = TensorBoardLogger(save_dir=args.save_dir, name=args.name, version=args.version)
-
-    trainer = pl.Trainer.from_argparse_args(args, callbacks=callbacks, logger=logger)
-    trainer.fit(model=model, train_dataloaders=dl_train, val_dataloaders=dl_test)
+    trainer = pl.Trainer.from_argparse_args(args)
+    trainer.fit(model=model, train_dataloaders=dl_train)
 
 if __name__ == '__main__':
     main()
