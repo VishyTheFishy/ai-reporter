@@ -457,7 +457,7 @@ class LitAddaUnet(LitI2IGAN):
 
                     for i in range(0,len(parameters)-1):                            
                         layer_mag = 0
-                        if parameters[i+1] <= len(gp):
+                        if parameters[i+1] <= len(dg):
                             if self.num_steps == 0:
                                 grads_final[i] = np.concatenate(dg[parameters[i]:parameters[i+1]])
                             else:
