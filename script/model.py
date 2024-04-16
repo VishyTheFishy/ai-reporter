@@ -460,6 +460,7 @@ class LitAddaUnet(LitI2IGAN):
                         if parameters[i+1] <= len(gp):
                             layer_mag += np.linalg.norm(gp[parameters[i]:parameters[i+1]])
                             gl[i] = layer_mag
+                    gl[0] = 0
                     self.weights.append(.95*self.weights[-1]+.05*gl)
                                         
                     self.G.zero_grad()
