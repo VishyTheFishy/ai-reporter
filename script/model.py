@@ -379,7 +379,7 @@ class LitAddaUnet(LitI2IGAN):
 
         self.weights_list = [
                     [0,0,0 ,0 ,0,0 ,0,0,0 ,0,0 ,0 ,1 ,0,0,0,],
-                    [0,0.2,0 ,0 ,0,0 ,0,0,0 ,0,0 ,0 ,0.8 ,0,0,0,],]
+                    [0,0.3,0 ,0 ,0,0 ,0,0,0 ,0,0 ,0 ,0.7 ,0,0,0,],]
         self.grads_final = []
 
 
@@ -432,10 +432,9 @@ class LitAddaUnet(LitI2IGAN):
             
             self.num_steps += 1
 
-            #weight = self.weights_list[self.hparams.weight_id]
+            weight = self.weights_list[self.hparams.weight_id]
             
-            weight = self.weights[-1]/self.weights[-1].sum() 
-            print(weight)
+            #weight = self.weights[-1]/self.weights[-1].sum() 
             loss_g = 0
             scale = np.ones(len(layers))
             for layer in layers:
@@ -445,7 +444,7 @@ class LitAddaUnet(LitI2IGAN):
                 loss_g_l = self.bce_logits(pred_y, y_A)
                 loss_g += loss_g_l*weight[layer]
 
-                if (layer == 15):
+                """if (layer == 15):
                     gl = np.zeros(len(layers))
                     dg = []
                     loss_g_l.backward(retain_graph=True)
@@ -467,7 +466,7 @@ class LitAddaUnet(LitI2IGAN):
                         
                     self.weights.append(.95*self.weights[-1]+.05*gl)
                                         
-                    self.G.zero_grad()
+                    self.G.zero_grad()"""
 
                                                 
             self.log("loss_g", loss_g, prog_bar=True, logger=True)
