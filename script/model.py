@@ -380,8 +380,7 @@ class LitAddaUnet(LitI2IGAN):
         self.weights_list = [
                     [0,0,0 ,0 ,0,0 ,0,0,0 ,0,0 ,0 ,1 ,0,0,0,],
                     [0,0.2,0 ,0 ,0,0 ,0,0,0 ,0,0 ,0 ,0.8 ,0,0,0,],]
-        self.grad_finals = []
-        self.grad_layers = []
+        self.grads_final = []
 
 
     def softmax(self, x):
@@ -459,11 +458,11 @@ class LitAddaUnet(LitI2IGAN):
                         layer_mag = 0
                         if parameters[i+1] <= len(dg):
                             if self.num_steps == 0:
-                                grads_final[i] = np.concatenate(dg[parameters[i]:parameters[i+1]])
+                                self.grads_final.append(np.concatenate(dg[parameters[i]:parameters[i+1]]))
                             else:
-                                grads_final[i] = .9*grads_final[i] +.1*np.concatenate(dg[parameters[i]:parameters[i+1]])
+                                self.grads_final[i] = .9*self.grads_final[i] +.1*np.concatenate(dg[parameters[i]:parameters[i+1]])
 
-                    for i, grad in enum(grads_final):
+                    for i, grad in enum(self.grads_final):
                         gl[i] = np.norm(grad)
                         
                     self.weights.append(.95*self.weights[-1]+.05*gl)
