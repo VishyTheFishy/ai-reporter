@@ -448,19 +448,20 @@ class LitAddaUnet(LitI2IGAN):
 
                 if (layer == 15):
                     gl = np.zeros(len(layers))
+                    dg = []
                     loss_g_l.backward(retain_graph=True)
                     for param in self.G.parameters():
                         if param.grad is not None:
                             grad_flat = np.array(param.grad.cpu().detach().flatten(), dtype=np.float32)
-                            dg.append(np.linalg.norm(grad_flat))
+                            dg.append(grad_flat)
 
                     for i in range(0,len(parameters)-1):                            
                         layer_mag = 0
                         if parameters[i+1] <= len(gp):
                             if self.num_steps == 0:
-                                grads_final[i] = np.concatenate(gp[parameters[i]:parameters[i+1]])
+                                grads_final[i] = np.concatenate(dg[parameters[i]:parameters[i+1]])
                             else:
-                                grads_final[i] = .9*grads_final[i] +.1*np.concatenate(gp[parameters[i]:parameters[i+1]])
+                                grads_final[i] = .9*grads_final[i] +.1*np.concatenate(dg[parameters[i]:parameters[i+1]])
 
                     for i, grad in enum(grads_final):
                         gl[i] = np.norm(grad)
