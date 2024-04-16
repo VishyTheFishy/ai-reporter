@@ -371,7 +371,16 @@ class LitAddaUnet(LitI2IGAN):
     def configure_optimizers(self):
         gen_optimizer = optim.Adam(self.G.parameters(), lr=self.hparams.lr_G)
         disc_optimizers = [optim.Adam(D.parameters(), lr=self.hparams.lr_D) for D in self.D_list]
-        return disc_optimizers + [gen_optimizer] 
+
+        def lambda_rule(epoch):
+            n_epochs_decay = float(100 - self.hparams.n_epochs_const + 1) #self.hparams.max_epochs
+            lr_l = 1.0 - max(0, epoch - self.hparams.n_epochs_const) / n_epochs_decay
+            return lr_l
+
+        opts = disc_optimizers + [gen_optimizer]
+        schs = [lr_scheduler.LambdaLR(opt, lr_lambda=lambda_rule) for opt in opts]
+
+        return opts, schs
 
     def training_step(self, batch, batch_idx, optimizer_idx):
         src_A, src_B = batch
