@@ -408,14 +408,13 @@ class LitAddaUnet(LitI2IGAN):
             layers = (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)
             parameters = (0,1,2,5,8,11,14,17,20,23,26,29,32,35,38,39,40)
             
-            g = []
-            l = []
             
             self.num_steps += 1
 
             #weight = self.weights_list[self.hparams.weight_id]
             
             weight = self.weights[-1]/self.weights[-1].sum() 
+            print(weight)
             loss_g = 0
             scale = np.ones(len(layers))
             for layer in layers:
