@@ -410,16 +410,12 @@ class LitAddaUnet(LitI2IGAN):
             
             g = []
             l = []
-
-            grad_layers = []
-            grad_finals = []
-
-                    
+            
             self.num_steps += 1
 
-            weight = self.weights_list[self.hparams.weight_id]
-            #weight = self.weights[-1]/self.weights[-1].sum() 
-            w = weight
+            #weight = self.weights_list[self.hparams.weight_id]
+            
+            weight = self.weights[-1]/self.weights[-1].sum() 
             loss_g = 0
             scale = np.ones(len(layers))
             for layer in layers:
@@ -429,73 +425,25 @@ class LitAddaUnet(LitI2IGAN):
                 loss_g_l = self.bce_logits(pred_y, y_A)
                 loss_g += loss_g_l*weight[layer]
 
-                if (self.num_steps > 1):
-                    loss_g_l.backward(retain_graph=True)
-                    dg = []
-                    gp = []
+                if (layer == 15):
                     gl = np.zeros(len(layers))
-                    
+                    loss_g_l.backward(retain_graph=True)
+                    gp = []                    
                     for param in self.G.parameters():
                         if param.grad is not None:
                             grad_flat = np.array(param.grad.cpu().detach().flatten(), dtype=np.float32)
-                            dg.append(grad_flat)
                             gp.append(np.linalg.norm(grad_flat))
-                    for i in range(0,len(parameters)-1):
-                        if (i == layer):
-                            grad_layers.append(np.concatenate(dg[parameters[i]:parameters[i+1]]))
-                        if (layer == 15):
-                            grad_finals.append(np.concatenate(dg[parameters[i]:parameters[i+1]]))
-                            
+
+                    for i in range(0,len(parameters)-1):                            
                         layer_mag = 0
                         if parameters[i+1] <= len(gp):
-                            for j in gp[parameters[i]:parameters[i+1]]:
-                                layer_mag += np.linalg.norm(j)
+                            layer_mag += np.linalg.norm(gp[parameters[i]:parameters[i+1]])
                             gl[i] = layer_mag
-                    
-                    """scale[layer] = gl[layer]
-                    if layer == layers[-1]:
-                        w = gl/scale
-                    dg = np.concatenate(dg)
-                    mag = np.linalg.norm(dg)
-                    dloss = self.D_losses[layer][-1]
-                    g.append(mag)
-                    l.append(dloss)"""
-                    
+                    self.weights.append(.95*self.weights[-1]+.05*gl)
+                                        
                     self.G.zero_grad()
 
-                    
-            
-            g = np.array(g)
-            l = np.array(l)
-            
-            if len(self.grad_layers) == 0:
-                self.grad_layers = grad_layers
-                self.grad_finals = grad_finals
-            else:
-                for i in range(0,len(grad_layers)):
-                    self.grad_layers[i] += grad_layers[i]
-                    self.grad_finals[i] += grad_finals[i]
-                
-                    
-
-            #self.grads.append(.8*self.grads[-1] + .2*g)
-            #self.losses.append(.8*self.losses[-1] + .2*l)
-            
-            #self.weights.append(self.grads[-1]/self.losses[-1])
-            
-            #self.weights.append(.9*self.weights[-1]+.1*w)
-
-            #if ((self.num_steps - 4)%500 == 0):
-             #   print(self.weights)
-            
-            if ((self.num_steps - 25)%100 == 0):
-                sim = []
-                for i in range(0,len(grad_layers)):
-                        sim.append(self.cos_similarity(self.grad_layers[i],self.grad_finals[i]))
-                print(sim)
-                self.grad_layers = []
-                self.grad_finals = []
-
+                                                
             self.log("loss_g", loss_g, prog_bar=True, logger=True)
             return loss_g
 
