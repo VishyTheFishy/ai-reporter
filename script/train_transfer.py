@@ -10,7 +10,7 @@ import pytorch_lightning as pl
 from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateMonitor
 from pytorch_lightning.loggers import TensorBoardLogger
 
-from dataset import LitUnalignedDM, LitAlignedDM
+from dataset import LitAlignedDM
 from model import LitTransferUnet
 
 def parse_arguments():
