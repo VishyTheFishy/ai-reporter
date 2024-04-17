@@ -339,6 +339,31 @@ class LitTransferUnet(LitI2IGAN):
         loss = nn.MSELoss()
 
         return(loss(embed_A, embed_B))
+    
+    def validation_step(self, batch, batch_idx):
+        src_B, tgt_B = batch
+
+        mask = get_constant_dim_mask(tgt_B[0].detach().cpu().numpy())
+        mask = torch.from_numpy(mask).to(src_B.device)
+
+        with torch.no_grad():
+            pred_tgt_B = self.G(src_B)[:, mask, :, :]
+            tgt_B = tgt_B[:, mask, :, :]
+            p = self.pearson_metric(pred_tgt_B.flatten(), tgt_B.flatten())            
+            self.pearson_val.append(p)
+
+    def test_step(self, batch, batch_idx):
+        src_B, tgt_B = batch
+
+        mask = get_constant_dim_mask(tgt_B[0].detach().cpu().numpy())
+        mask = torch.from_numpy(mask).to(src_B.device)
+
+        with torch.no_grad():
+            pred_tgt_B = self.G(src_B)[:, mask, :, :]
+            tgt_B = tgt_B[:, mask, :, :]
+            p = self.pearson_metric(pred_tgt_B.flatten(), tgt_B.flatten())
+            self.pearson_tst.append(p)
+
 
 
 
