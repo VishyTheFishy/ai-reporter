@@ -298,6 +298,7 @@ class LitMSUnetGAN(LitUnetGAN):
 
 class LitTransferUnet(LitI2IGAN):
     def _init_models(self):
+        old_dict = torch.load(self.hparams.pretrained_unet_path)
         state_dict = {}
         for key, value in old_dict.items():
             new_key = key.replace('module.', '')  # Remove "module." from the key
