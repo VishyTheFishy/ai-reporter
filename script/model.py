@@ -339,7 +339,7 @@ class LitTransferUnet(LitI2IGAN):
 
         loss = nn.MSELoss()
 
-        return(loss(embed_A, embed_B))
+        return(loss(src_A, src_B))
     
     def validation_step(self, batch, batch_idx):
         src_B, tgt_B = batch
