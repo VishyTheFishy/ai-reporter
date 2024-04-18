@@ -306,14 +306,14 @@ class LitTransferUnet(LitI2IGAN):
         
         self.G_A = define_G(self.hparams.in_nc, self.hparams.out_nc, 
                             self.hparams.ngf, "unet_256", norm="batch", 
-                            use_dropout=not self.hparams.no_dropout_G).eval()
+                            use_dropout=not self.hparams.no_dropout_G)
         self.G_A.load_state_dict(state_dict)
         for p in self.G_A.parameters():
             p.requires_grad = False
 
         self.G_transfer = define_G(self.hparams.in_nc, self.hparams.out_nc, 
                     self.hparams.ngf, "unet_256", norm="batch", 
-                    use_dropout=not self.hparams.no_dropout_G).eval()
+                    use_dropout=not self.hparams.no_dropout_G)
         self.G_transfer.load_state_dict(state_dict)
     
     
