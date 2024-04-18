@@ -335,7 +335,7 @@ class LitTransferUnet(LitI2IGAN):
         src_A, src_B = batch
         
         embed_A = self.G_A(src_A, layer_n=self.hparams.adaptation_layer)
-        embed_B = self.G(src_B, layer_n=self.hparams.adaptation_layer)
+        embed_B = self.G_transfer(src_B, layer_n=self.hparams.adaptation_layer)
 
         loss = nn.MSELoss()
 
@@ -348,7 +348,7 @@ class LitTransferUnet(LitI2IGAN):
         mask = torch.from_numpy(mask).to(src_B.device)
 
         with torch.no_grad():
-            pred_tgt_B = self.G(src_B)[:, mask, :, :]
+            pred_tgt_B = self.G_transfer(src_B)[:, mask, :, :]
             tgt_B = tgt_B[:, mask, :, :]
             p = self.pearson_metric(pred_tgt_B.flatten(), tgt_B.flatten())            
             self.pearson_val.append(p)
