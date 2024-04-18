@@ -329,7 +329,7 @@ class LitTransferUnet(LitI2IGAN):
 
         sch_G = lr_scheduler.LambdaLR(opt_G, lr_lambda=lambda_rule)
 
-        return opt_G, sch_G
+        return [[opt_G], [sch_G]]
 
     def training_step(self, batch, batch_idx, optimizer_idx):
         src_A, src_B = batch
