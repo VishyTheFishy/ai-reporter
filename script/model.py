@@ -350,7 +350,8 @@ class LitTransferUnet(LitI2IGAN):
 
         self.num_steps += 1
         print(self.num_steps)
-        self.cossum += sim.item()
+        self.cossum += sum(sim.tolist())
+
         if(self.num_steps % 110 == 0):
             print("epoch:", self.num_steps/100, "sum:", self.cossum)
             self.cossum = 0
