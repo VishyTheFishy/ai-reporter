@@ -1,6 +1,6 @@
 DATASET="CD29"
 TRIALS=2
-EPOCHS=25
+EPOCHS=20
 
 for trial in $(seq 0 $((TRIALS-1)))
 do
