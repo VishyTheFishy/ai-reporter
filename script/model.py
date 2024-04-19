@@ -341,7 +341,7 @@ class LitTransferUnet(LitI2IGAN):
 
         cossim = nn.CosineSimilarity()
         print(loss(embed_A, embed_B))
-        print(cossim(torch.flatten(embed_A), torch.flatten(embed_B)))
+        print(cossim(torch.flatten(embed_A, start_dim=1), torch.flatten(embed_B, start_dim=1)))
 
         return(loss(embed_A, embed_B))
     
