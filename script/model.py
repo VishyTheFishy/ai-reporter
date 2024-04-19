@@ -338,7 +338,10 @@ class LitTransferUnet(LitI2IGAN):
         embed_B = self.G_transfer(src_B, layer_n=self.hparams.adaptation_layer)
 
         loss = nn.MSELoss()
+
+        cossim = nn.CosineSimilarity()
         print(loss(embed_A, embed_B))
+        print(cossim(torch.flatten(embed_A), torch.flatten(embed_B)))
 
         return(loss(embed_A, embed_B))
     
