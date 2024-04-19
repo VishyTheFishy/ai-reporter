@@ -345,15 +345,13 @@ class LitTransferUnet(LitI2IGAN):
         loss = nn.MSELoss()
 
         cossim = nn.CosineSimilarity()
-        print(loss(embed_A, embed_B))
         sim = cossim(torch.flatten(embed_A, start_dim=1), torch.flatten(embed_B, start_dim=1))
 
         self.num_steps += 1
-        print(self.num_steps)
         self.cossum += sum(sim.tolist())
 
-        if(self.num_steps % 110 == 0):
-            print("epoch:", self.num_steps/100, "sum:", self.cossum)
+        if(self.num_steps % 111 == 0):
+            print("epoch:", self.num_steps/111, "avg:", self.cossum/111)
             self.cossum = 0
 
         return(loss(embed_A, embed_B))
