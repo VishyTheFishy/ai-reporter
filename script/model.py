@@ -315,6 +315,11 @@ class LitTransferUnet(LitI2IGAN):
                     self.hparams.ngf, "unet_256", norm="batch", 
                     use_dropout=not self.hparams.no_dropout_G)
         self.G_transfer.load_state_dict(state_dict)
+
+        self.num_steps = 0
+        self.cossum = 0
+
+    
     
     
     def configure_optimizers(self):
@@ -341,7 +346,13 @@ class LitTransferUnet(LitI2IGAN):
 
         cossim = nn.CosineSimilarity()
         print(loss(embed_A, embed_B))
-        print(cossim(torch.flatten(embed_A, start_dim=1), torch.flatten(embed_B, start_dim=1)))
+        sim =cossim(torch.flatten(embed_A, start_dim=1), torch.flatten(embed_B, start_dim=1)))
+
+        self.num_steps += 1
+        self.cossum += sim
+        if(self.num_steps % 200 == 0):
+            print("epoch:", self.num_steps/100, "sum:", self.cossum)
+            self.cossum = 0
 
         return(loss(embed_A, embed_B))
     
