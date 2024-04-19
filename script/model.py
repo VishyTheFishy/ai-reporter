@@ -349,6 +349,7 @@ class LitTransferUnet(LitI2IGAN):
         sim = cossim(torch.flatten(embed_A, start_dim=1), torch.flatten(embed_B, start_dim=1))
 
         self.num_steps += 1
+        print(self.num_steps += 1)
         self.cossum += sim
         if(self.num_steps % 200 == 0):
             print("epoch:", self.num_steps/100, "sum:", self.cossum)
