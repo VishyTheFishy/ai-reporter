@@ -121,6 +121,7 @@ def main():
         all_pred_imgs.append(pred_imgs.detach().cpu().numpy())
         all_tgt_imgs.append(tgt_imgs.detach().cpu().numpy())
     print("===> Testing Corr:", np.mean(corrs),"===> Standard Deviation:", np.std(corrs),"===> Range:", np.min(corrs), np.max(corrs))
+    print(list(corrs))
 
     if args.save_results_dir is not None:
         os.makedirs(args.save_results_dir, exist_ok=True)
