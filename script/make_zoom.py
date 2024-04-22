@@ -1,5 +1,6 @@
 from PIL import Image
 import os
+from random import randrange
 
 # Create the new directory
 
