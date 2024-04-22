@@ -7,10 +7,10 @@ from random import randrange
 org_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_PC"
 final_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_PC_1-5x"
 
-os.mkdirs(final_d + "/input/train")
-os.mkdirs(final_d + "/output/train")
-os.mkdirs(final_d + "/input/test")
-os.mkdirs(final_d + "/output/test")
+os.makedirs(final_d + "/input/train")
+os.makedirs(final_d + "/output/train")
+os.makedirs(final_d + "/input/test")
+os.makedirs(final_d + "/output/test")
 
 
 size = 1024
