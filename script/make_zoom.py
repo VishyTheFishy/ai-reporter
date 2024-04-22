@@ -3,35 +3,32 @@ import os
 
 # Create the new directory
 
-input_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_BF"
-output_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_BF_zoom"
+org_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_BF"
+final_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_BF_zoom"
 
-x,y = 512,512
-
-# Zoom factor (adjust as needed)
+size = 1024
 zoom = 2.0  # 2.0 means 200% zoom
+matrix = size // zoom
 
 # Function to zoom and copy images
-def zoom_and_copy(input_path, output_path):
-    with Image.open(input_path) as img:
-        w, h = img.size
-        zoom2 = zoom * 2
-        img = img.crop((x - w / zoom2, y - h / zoom2, x + w / zoom2, y + h / zoom2))
-        zoomed_img = img.resize((w, h), Image.LANCZOS)
+def copy_pair(split, name):
+        img1 = Image.open(os.path.join(org_d, "input",split,name))
+        img2 = Image.open(os.path.join(org_d, "output",split,name))
+        x1 = randrange(0, size - matrix)
+        y1 = randrange(0, size - matrix)
+        img1.crop((x1, y1, x1 + matrix, y1 + matrix))
+        img2.crop((x1, y1, x1 + matrix, y1 + matrix))
         # Save the zoomed image to the output directory
-        zoomed_img.save(output_path)
+        img1.save(os.path.join(final_d, "input",split,name))
+        img2.save(os.path.join(final_d, "output",split,name))
 
-def copy_directory(input_directory, output_directory):
-    for input_file in os.listdir(input_directory):
+def copy(split):
+    for input_file in os.listdir(os.path.join(org_d,"input",split)):
         if input_file.endswith(".tif"):
-            input_path = os.path.join(input_directory, input_file)
-            output_path = os.path.join(output_directory, input_file)
-            zoom_and_copy(input_path, output_path)
+            copy_pair(split, input_file)
 
 
 # Zoom and copy images from the input/train directory
-partitions = ["input/train", "output/train", "input/test", "output/test"]
-for partition in partitions:
-    copy_directory(os.path.join(input_d,partition),os.path.join(output_d,partition))
-
+copy("train")
+copy("test")
 
