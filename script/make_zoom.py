@@ -3,8 +3,8 @@ import os
 
 # Create the new directory
 
-org_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_BF"
-final_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_BF_zoom"
+org_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_PC"
+final_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_PC_2x"
 
 size = 1024
 zoom = 2.0  # 2.0 means 200% zoom
