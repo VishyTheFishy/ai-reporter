@@ -8,11 +8,11 @@ org_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_PC"
 final_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_PC_1-5x"
 
 os.mkdir(final_d + "/input")
-os.mkdir(final_d + "/output"))
-os.mkdir(final_d + "/input/train"))
-os.mkdir(final_d + "/output/train"))
-os.mkdir(final_d + "/input/test"))
-os.mkdir(final_d + "/output/test"))
+os.mkdir(final_d + "/output")
+os.mkdir(final_d + "/input/train")
+os.mkdir(final_d + "/output/train")
+os.mkdir(final_d + "/input/test")
+os.mkdir(final_d + "/output/test")
 
 
 size = 1024
