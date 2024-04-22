@@ -5,7 +5,7 @@ from random import randrange
 # Create the new directory
 
 org_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_PC"
-final_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_PC_1-1x"
+final_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_PC_1-2x"
 
 os.makedirs(final_d + "/input/train",exist_ok=True)
 os.makedirs(final_d + "/output/train",exist_ok=True)
@@ -14,7 +14,7 @@ os.makedirs(final_d + "/output/test",exist_ok=True)
 
 
 size = 1024
-zoom = 1.1  # 2.0 means 200% zoom
+zoom = 1.2  # 2.0 means 200% zoom
 matrix = size // zoom
 
 # Function to zoom and copy images
