@@ -24,13 +24,10 @@ def copy_pair(split, name):
                         with Image.open(os.path.join(org_d, "output",split,name)) as img2:
                                 x1 = randrange(0, size - matrix)
                                 y1 = randrange(0, size - matrix)
-                                img1.crop((x1, y1, x1 + matrix, y1 + matrix))
-                                img2.crop((x1, y1, x1 + matrix, y1 + matrix))
-                                # Save the zoomed image to the output directory
-                                img1.save(os.path.join(final_d, "input",split,name))
-                                img2.save(os.path.join(final_d, "output",split,name))
+                                img1.crop((x1, y1, x1 + matrix, y1 + matrix)).save(os.path.join(final_d, "input",split,name))
+                                img2.crop((x1, y1, x1 + matrix, y1 + matrix)).save(os.path.join(final_d, "output",split,name))
         except FileNotFoundError: 
-                pass
+                print("Not Found")
 
 def copy(split):
     for input_file in os.listdir(os.path.join(org_d,"input",split)):
