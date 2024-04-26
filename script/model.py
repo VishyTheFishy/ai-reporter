@@ -317,7 +317,9 @@ class LitTransferUnet(LitI2IGAN):
         self.G_transfer.load_state_dict(state_dict)
 
         self.num_steps = 0
-        self.cossum = 0
+        
+        self.actuals = []
+        self.sq_error = []
 
     
     
@@ -344,15 +346,25 @@ class LitTransferUnet(LitI2IGAN):
 
         loss = nn.MSELoss()
 
-        cossim = nn.CosineSimilarity()
-        sim = cossim(torch.flatten(embed_A, start_dim=1), torch.flatten(embed_B, start_dim=1))
+        flat_A = torch.flatten(embed_A)
+        flat_B = torch.flatten(embed_B)
+
+        self.sq_error.append((flat_A - flat_B)**2) 
+        self.actuals.append(flat_A)
+
 
         self.num_steps += 1
-        self.cossum += sum(sim.tolist())
 
         if(self.num_steps % 111 == 0):
-            print("epoch:", self.num_steps/111, "avg:", self.cossum/111)
-            self.cossum = 0
+            vars = np.var(np.transpose(np.array(self.actuals)))
+            errors = []
+            for error in self.sq_errors:
+                errors.append(np.mean(error/vars))
+
+            
+            print("epoch:", self.num_steps/111, "avg:", sum(errors)/111)
+            self.sq_error = []
+            self.actuals = []
 
         return(loss(embed_A, embed_B))
     
