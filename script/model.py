@@ -358,7 +358,7 @@ class LitTransferUnet(LitI2IGAN):
         if(self.num_steps % 111 == 0):
             vars = np.var(np.transpose(np.array(self.actuals)))
             errors = []
-            for error in self.sq_errors:
+            for error in self.sq_error:
                 errors.append(np.mean(error/vars))
 
             
