@@ -346,8 +346,8 @@ class LitTransferUnet(LitI2IGAN):
 
         loss = nn.MSELoss()
 
-        flat_A = torch.flatten(embed_A)
-        flat_B = torch.flatten(embed_B)
+        flat_A = torch.flatten(embed_A).detach().cpu().numpy()
+        flat_B = torch.flatten(embed_B).detach().cpu().numpy()
 
         self.sq_error.append((flat_A - flat_B)**2) 
         self.actuals.append(flat_A)
