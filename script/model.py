@@ -487,7 +487,7 @@ class LitAddaUnet(LitI2IGAN):
     
             loss_d = (loss_A + loss_B) / 2
             self.log(f"loss_d:{optimizer_idx}", loss_d, prog_bar=True, logger=True)
-            wandb.log({f"loss D": loss_d})
+            wandb.log({f"loss D {optimizer_idx}": loss_d})
             self.D_losses[(optimizer_idx)].append(loss_d.item())
             return loss_d
 
