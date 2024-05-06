@@ -439,7 +439,7 @@ class LitAddaUnet(LitI2IGAN):
         self.weight = self.weights_list[self.hparams.weight_id]
         self.weight = self.weight/sum(self.weight)
 
-        config = dict("weights"=self.weight)
+        config = {"weights":self.weight}
         wandb.init(
             project="weighted",
             config=config,
