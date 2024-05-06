@@ -9,6 +9,7 @@ import torch.nn.functional as F
 
 import torchmetrics
 import pytorch_lightning as pl
+import wandb
 
 # from BNNBench.backbones.unet import define_G
 from networks import define_G, define_D
@@ -400,6 +401,8 @@ class LitTransferUnet(LitI2IGAN):
 class LitAddaUnet(LitI2IGAN):
 
     def _init_models(self):
+
+        
         channels_dict = [64,128, 256,512, 512,512, 512, 512,512,512, 512, 512, 256, 128, 64, 3]
         kw_dict = [4,4, 4,4, 4,3, 3,3, 3,3, 4,4, 4,4, 4,4]
         old_dict = torch.load(self.hparams.pretrained_unet_path)
@@ -431,8 +434,18 @@ class LitAddaUnet(LitI2IGAN):
         self.losses = [np.array([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])]
 
         self.weights_list = [
-                    [0,0,0 ,0 ,0,0 ,0,0,0 ,0,0 ,0 ,1 ,0,0,0,],
+                    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,],
                     [0,0.3,0 ,0 ,0,0 ,0,0,0 ,0,0 ,0 ,0.7 ,0,0,0,],]
+        self.weight = self.weights_list[self.hparams.weight_id]
+        self.weight = self.weight/sum(self.weight)
+
+        config = dict("weights"=self.weight)
+        wandb.init(
+            project="weighted",
+            config=config,
+        )
+
+        print(self.weight)
         self.grads_final = []
 
 
@@ -474,20 +487,15 @@ class LitAddaUnet(LitI2IGAN):
     
             loss_d = (loss_A + loss_B) / 2
             self.log(f"loss_d:{optimizer_idx}", loss_d, prog_bar=True, logger=True)
+            wandb.log({f"loss D": loss_d})
             self.D_losses[(optimizer_idx)].append(loss_d.item())
             return loss_d
 
         # G
         elif optimizer_idx == len(self.D_list):
-            layers = (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)
-            parameters = (0,1,2,5,8,11,14,17,20,23,26,29,32,35,38,39,40)
+        
+            weight = self.weight
             
-            
-            self.num_steps += 1
-
-            weight = self.weights_list[self.hparams.weight_id]
-            
-            #weight = self.weights[-1]/self.weights[-1].sum() 
             loss_g = 0
             scale = np.ones(len(layers))
             for layer in layers:
@@ -495,9 +503,18 @@ class LitAddaUnet(LitI2IGAN):
                 pred_y = self.D_list[layer](tgt_B)
                 y_A = torch.ones_like(pred_y, requires_grad=False)
                 loss_g_l = self.bce_logits(pred_y, y_A)
+                wandb.log({f"loss G {layer}": loss_g_l})
                 loss_g += loss_g_l*weight[layer]
+            wandb.log({f"loss G": loss_g})
+            self.log("loss_g", loss_g, prog_bar=True, logger=True)
+            return loss_g
 
-                """if (layer == 15):
+
+                """
+            self.num_steps += 1
+            layers = (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)
+            parameters = (0,1,2,5,8,11,14,17,20,23,26,29,32,35,38,39,40)
+                if (layer == 15):
                     gl = np.zeros(len(layers))
                     dg = []
                     loss_g_l.backward(retain_graph=True)
@@ -522,8 +539,6 @@ class LitAddaUnet(LitI2IGAN):
                     self.G.zero_grad()"""
 
                                                 
-            self.log("loss_g", loss_g, prog_bar=True, logger=True)
-            return loss_g
 
         else:
             raise NotImplementedError
