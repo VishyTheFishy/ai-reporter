@@ -493,6 +493,7 @@ class LitAddaUnet(LitI2IGAN):
 
         # G
         elif optimizer_idx == len(self.D_list):
+            layers = (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15)
         
             weight = self.weight
             
