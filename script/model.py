@@ -385,20 +385,21 @@ class LitTransferUnet(LitI2IGAN):
 
         self.sq_error_val.append((flat_A - flat_B)**2) 
         self.actuals_val.append(flat_A)
+        print(flat_A.shape)
 
         print("\n")
         print(self.num_val_steps)
         self.num_val_steps += 1
         
 
-        if(self.num_val_steps % 200 == 0):
+        if(self.num_val_steps % 77 == 2):
             vars = np.var(np.transpose(np.array(self.actuals_val)))
             errors = []
             for error in self.sq_error_val:
                 errors.append(np.mean(error/vars))
 
             
-            print("epoch:", self.num_val_steps/91, "avg:", sum(errors)/91)
+            print("epoch:", self.num_val_steps/77, "avg:", sum(errors)/77)
             self.sq_error_val = []
             self.actuals_val = []
     def test_step(self, batch, batch_idx):
