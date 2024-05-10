@@ -386,9 +386,6 @@ class LitTransferUnet(LitI2IGAN):
         self.sq_error_val.append((flat_A - flat_B)**2) 
         self.actuals_val.append(flat_A)
         print(flat_A.shape)
-
-        print("\n")
-        print(self.num_val_steps)
         self.num_val_steps += 1
         
 
@@ -399,7 +396,7 @@ class LitTransferUnet(LitI2IGAN):
                 errors.append(np.mean(error/vars))
 
             
-            print("epoch:", (self.num_val_steps-2)/153, "avg:", sum(errors)/153)
+            print("epoch:", (self.num_val_steps-2)/153, "val avg:", sum(errors)/153)
             self.sq_error_val = []
             self.actuals_val = []
     def test_step(self, batch, batch_idx):
