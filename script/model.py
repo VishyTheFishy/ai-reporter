@@ -361,14 +361,14 @@ class LitTransferUnet(LitI2IGAN):
 
         self.num_steps += 1
 
-        if(self.num_steps % 111 == 0):
+        if(self.num_steps % 222 == 0):
             vars = np.var(np.transpose(np.array(self.actuals)))
             errors = []
             for error in self.sq_error:
                 errors.append(np.mean(error/vars))
 
             
-            print("epoch:", self.num_steps/111, "avg:", sum(errors)/111)
+            print("epoch:", self.num_steps/222, "avg:", sum(errors)/222)
             self.sq_error = []
             self.actuals = []
 
