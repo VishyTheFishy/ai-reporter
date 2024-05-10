@@ -323,6 +323,10 @@ class LitTransferUnet(LitI2IGAN):
         self.actuals = []
         self.sq_error = []
 
+        self.actuals_val = []
+        self.sq_error_val = []
+
+
     
     
     
@@ -371,8 +375,28 @@ class LitTransferUnet(LitI2IGAN):
         return(loss(embed_A, embed_B))
     
     def validation_step(self, batch, batch_idx):
+        embed_A = self.G_A(src_A, layer_n=self.hparams.adaptation_layer)
+        embed_B = self.G_transfer(src_B, layer_n=self.hparams.adaptation_layer)
+
+        flat_A = torch.flatten(embed_A).detach().cpu().numpy()
+        flat_B = torch.flatten(embed_B).detach().cpu().numpy()
+
+        self.sq_error_val.append((flat_A - flat_B)**2) 
+        self.actuals_val.append(flat_A)
+
+
         self.num_val_steps += 1
-        print(self.num_val_steps)
+
+        if(self.num_val_steps % 91 == 0):
+            vars = np.var(np.transpose(np.array(self.actuals_val)))
+            errors = []
+            for error in self.sq_error_val:
+                errors.append(np.mean(error/vars))
+
+            
+            print("epoch:", self.num_val_steps/91, "avg:", sum(errors)/91)
+            self.sq_error_val = []
+            self.actuals_val = []
     def test_step(self, batch, batch_idx):
         src_B, tgt_B = batch
 
