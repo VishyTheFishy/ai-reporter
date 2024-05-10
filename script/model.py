@@ -360,8 +360,8 @@ class LitTransferUnet(LitI2IGAN):
         flat_A = torch.flatten(embed_A).detach().cpu().numpy()
         flat_B = torch.flatten(embed_B).detach().cpu().numpy()
 
-        print(np.linalg.norm((torch.flatten(flat_A) - torch.flatten(flat_B)).detach().cpu().numpy()))
-
+        print(np.linalg.norm((flat_A.flatten() - flat_B.flatten())))
+        
         self.cossum += np.dot(flat_A,flat_B)/(np.linalg.norm(flat_A)*np.linalg.norm(flat_B))
 
         self.sq_error.append((flat_A - flat_B)**2) 
@@ -397,7 +397,7 @@ class LitTransferUnet(LitI2IGAN):
         flat_A = torch.flatten(embed_A).detach().cpu().numpy()
         flat_B = torch.flatten(embed_B).detach().cpu().numpy()
 
-        print(np.linalg.norm((flat_A.flatten() - flat_B.flatten()).detach().cpu().numpy()))
+        print(np.linalg.norm((flat_A.flatten() - flat_B.flatten())))
 
         self.cossum_val += np.dot(flat_A,flat_B)/(np.linalg.norm(flat_A)*np.linalg.norm(flat_B))
 
