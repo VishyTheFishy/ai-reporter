@@ -374,7 +374,7 @@ class LitTransferUnet(LitI2IGAN):
                 errors.append(np.mean(error/vars))
 
             
-            print("epoch:", self.num_steps/222, "avg:", sum(errors)/222, "cos:" self.cossum/153)
+            print("epoch:", self.num_steps/222, "avg:", sum(errors)/222, "cos:", self.cossum/153)
             self.sq_error = []
             self.actuals = []
             self.cossum = 0
