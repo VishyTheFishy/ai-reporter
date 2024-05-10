@@ -563,7 +563,7 @@ class LitAddaUnet(LitI2IGAN):
             raise NotImplementedError
 
     def validation_step(self, batch, batch_idx):
-        src_B, tgt_B = batch
+        src_A, src_B = batch
 
         mask = get_constant_dim_mask(tgt_B[0].detach().cpu().numpy())
         mask = torch.from_numpy(mask).to(src_B.device)
