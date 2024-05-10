@@ -44,9 +44,9 @@ def main():
     dm_train = LitAlignedDM(src_dir=os.path.join(args.data_dir_A,'input'), 
                               tgt_dir=os.path.join(args.data_dir_B,'input'), 
                               out_imsize=args.out_imsize, 
-                              bsize=args.bsize, 
+                              bsize=1, 
                               num_workers=args.num_workers,
-                              max_B_size=2,
+                              max_B_size=1,
                               zoom=args.zoom)
 
     dl_train = dm_train.train_dataloader()
