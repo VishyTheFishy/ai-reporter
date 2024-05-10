@@ -386,10 +386,11 @@ class LitTransferUnet(LitI2IGAN):
         self.sq_error_val.append((flat_A - flat_B)**2) 
         self.actuals_val.append(flat_A)
 
-
+        print(self.num_val_steps)
         self.num_val_steps += 1
+        
 
-        if(self.num_val_steps % 91 == 0):
+        if(self.num_val_steps % 200 == 0):
             vars = np.var(np.transpose(np.array(self.actuals_val)))
             errors = []
             for error in self.sq_error_val:
