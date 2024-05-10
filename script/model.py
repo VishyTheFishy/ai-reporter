@@ -318,6 +318,7 @@ class LitTransferUnet(LitI2IGAN):
         self.G_transfer.load_state_dict(state_dict)
 
         self.num_steps = 0
+        self.num_val_steps = 0
         
         self.actuals = []
         self.sq_error = []
@@ -370,17 +371,8 @@ class LitTransferUnet(LitI2IGAN):
         return(loss(embed_A, embed_B))
     
     def validation_step(self, batch, batch_idx):
-        src_B, tgt_B = batch
-
-        mask = get_constant_dim_mask(tgt_B[0].detach().cpu().numpy())
-        mask = torch.from_numpy(mask).to(src_B.device)
-
-        with torch.no_grad():
-            pred_tgt_B = self.G_transfer(src_B)[:, mask, :, :]
-            tgt_B = tgt_B[:, mask, :, :]
-            p = self.pearson_metric(pred_tgt_B.flatten(), tgt_B.flatten())            
-            self.pearson_val.append(p)
-
+        self.num_val_steps += 1
+        print(self.num_val_steps)
     def test_step(self, batch, batch_idx):
         src_B, tgt_B = batch
 
