@@ -375,6 +375,8 @@ class LitTransferUnet(LitI2IGAN):
         return(loss(embed_A, embed_B))
     
     def validation_step(self, batch, batch_idx):
+        src_B, tgt_B = batch
+
         embed_A = self.G_A(src_A, layer_n=self.hparams.adaptation_layer)
         embed_B = self.G_transfer(src_B, layer_n=self.hparams.adaptation_layer)
 
