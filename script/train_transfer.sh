@@ -11,4 +11,4 @@ echo $DIR_A $DIR_B $LOG_DIR $UNET_PATH $KWARGS
 
 mkdir -p $LOG_DIR
 
-python train_transfer.py --accelerator 'gpu' --auto_select_gpus 'True' --devices 1  --data_dir_A $DIR_A --data_dir_B $DIR_B --pretrained_unet_path $UNET_PATH  --save_dir $LOG_DIR $KWARGS
+python train_transfer.py --bsize 1 --accelerator 'gpu' --auto_select_gpus 'True' --devices 1  --data_dir_A $DIR_A --data_dir_B $DIR_B --pretrained_unet_path $UNET_PATH  --save_dir $LOG_DIR $KWARGS
