@@ -51,7 +51,7 @@ def main():
 
     dl_train = dm_train.train_dataloader()
 
-    dm_test = LitAlignedDM(src_dir=os.path.join(args.data_dir_B,'input'),
+    dm_test = LitAlignedDM(src_dir=os.path.join(args.data_dir_A,'input'),
                            tgt_dir=os.path.join(args.data_dir_B,'input'),
                            out_imsize=args.out_imsize,
                            bsize=args.bsize, 
