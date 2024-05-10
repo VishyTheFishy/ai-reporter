@@ -349,6 +349,8 @@ class LitTransferUnet(LitI2IGAN):
 
     def training_step(self, batch, batch_idx):
         src_A, src_B = batch
+
+        print(np.linalg.norm((torch.flatten(src_A) - torch.flatten(src_B)).detach().cpu().numpy()))
         
         embed_A = self.G_A(src_A, layer_n=self.hparams.adaptation_layer)
         embed_B = self.G_transfer(src_B, layer_n=self.hparams.adaptation_layer)
@@ -384,6 +386,8 @@ class LitTransferUnet(LitI2IGAN):
     
     def validation_step(self, batch, batch_idx):
         src_A, src_B = batch
+
+        print(np.linalg.norm((torch.flatten(src_A) - torch.flatten(src_B)).detach().cpu().numpy()))
 
         embed_A = self.G_A(src_A, layer_n=self.hparams.adaptation_layer)
         embed_B = self.G_transfer(src_B, layer_n=self.hparams.adaptation_layer)
