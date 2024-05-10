@@ -392,14 +392,14 @@ class LitTransferUnet(LitI2IGAN):
         self.num_val_steps += 1
         
 
-        if(self.num_val_steps % 77 == 2):
+        if(self.num_val_steps % 153 == 2):
             vars = np.var(np.transpose(np.array(self.actuals_val)))
             errors = []
             for error in self.sq_error_val:
                 errors.append(np.mean(error/vars))
 
             
-            print("epoch:", self.num_val_steps/77, "avg:", sum(errors)/77)
+            print("epoch:", (self.num_val_steps-2)/153, "avg:", sum(errors)/153)
             self.sq_error_val = []
             self.actuals_val = []
     def test_step(self, batch, batch_idx):
