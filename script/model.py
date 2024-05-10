@@ -326,6 +326,9 @@ class LitTransferUnet(LitI2IGAN):
         self.actuals_val = []
         self.sq_error_val = []
 
+        self.cossum = 0
+        self.cossum_val = 0
+
 
     
     
@@ -355,11 +358,14 @@ class LitTransferUnet(LitI2IGAN):
         flat_A = torch.flatten(embed_A).detach().cpu().numpy()
         flat_B = torch.flatten(embed_B).detach().cpu().numpy()
 
+        self.cossum = np.dot(flat_A,flat_B)/(np.linalg.norm(flat_A)*np.linalg.norm(flat_B)))
+
         self.sq_error.append((flat_A - flat_B)**2) 
         self.actuals.append(flat_A)
 
 
         self.num_steps += 1
+
 
         if(self.num_steps % 222 == 0):
             vars = np.var(np.transpose(np.array(self.actuals)))
@@ -368,9 +374,11 @@ class LitTransferUnet(LitI2IGAN):
                 errors.append(np.mean(error/vars))
 
             
-            print("epoch:", self.num_steps/222, "avg:", sum(errors)/222)
+            print("epoch:", self.num_steps/222, "avg:", sum(errors)/222, self.cossum/153)
             self.sq_error = []
             self.actuals = []
+            self.cossum = 0
+
 
         return(loss(embed_A, embed_B))
     
@@ -382,6 +390,9 @@ class LitTransferUnet(LitI2IGAN):
 
         flat_A = torch.flatten(embed_A).detach().cpu().numpy()
         flat_B = torch.flatten(embed_B).detach().cpu().numpy()
+
+        self.cossum_val = np.dot(flat_A,flat_B)/(np.linalg.norm(flat_A)*np.linalg.norm(flat_B)))
+
 
         self.sq_error_val.append((flat_A - flat_B)**2) 
         self.actuals_val.append(flat_A)
@@ -395,9 +406,11 @@ class LitTransferUnet(LitI2IGAN):
                 errors.append(np.mean(error/vars))
 
             
-            print("epoch:", (self.num_val_steps-2)/153, "val avg:", sum(errors)/153)
+            print("epoch:", (self.num_val_steps-2)/153, "val avg:", sum(errors)/153, "val cos:", self.cossum_val/153)
             self.sq_error_val = []
             self.actuals_val = []
+            self.cossum_val = 0
+
     def test_step(self, batch, batch_idx):
         src_B, tgt_B = batch
 
