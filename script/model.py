@@ -385,7 +385,6 @@ class LitTransferUnet(LitI2IGAN):
 
         self.sq_error_val.append((flat_A - flat_B)**2) 
         self.actuals_val.append(flat_A)
-        print(flat_A.shape)
         self.num_val_steps += 1
         
 
