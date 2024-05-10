@@ -360,6 +360,8 @@ class LitTransferUnet(LitI2IGAN):
         flat_A = torch.flatten(embed_A).detach().cpu().numpy()
         flat_B = torch.flatten(embed_B).detach().cpu().numpy()
 
+        print(np.linalg.norm((torch.flatten(flat_A) - torch.flatten(flat_B)).detach().cpu().numpy()))
+
         self.cossum += np.dot(flat_A,flat_B)/(np.linalg.norm(flat_A)*np.linalg.norm(flat_B))
 
         self.sq_error.append((flat_A - flat_B)**2) 
@@ -387,13 +389,15 @@ class LitTransferUnet(LitI2IGAN):
     def validation_step(self, batch, batch_idx):
         src_A, src_B = batch
 
-        print(np.linalg.norm((torch.flatten(src_A) - torch.flatten(src_B)).detach().cpu().numpy()))
+        
 
         embed_A = self.G_A(src_A, layer_n=self.hparams.adaptation_layer)
         embed_B = self.G_transfer(src_B, layer_n=self.hparams.adaptation_layer)
 
         flat_A = torch.flatten(embed_A).detach().cpu().numpy()
         flat_B = torch.flatten(embed_B).detach().cpu().numpy()
+
+        print(np.linalg.norm((torch.flatten(flat_A) - torch.flatten(flat_B)).detach().cpu().numpy()))
 
         self.cossum_val += np.dot(flat_A,flat_B)/(np.linalg.norm(flat_A)*np.linalg.norm(flat_B))
 
