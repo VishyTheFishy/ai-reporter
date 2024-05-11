@@ -24,7 +24,7 @@ def copy_pair(split, name):
           with Image.open(os.path.join(org_d, "input",split,name)) as img1:
             with Image.open(os.path.join(org_d, "output",split,name)) as img2:
               im1 = np.array(img1)
-              im2 = np.array(im2)
+              im2 = np.array(img2)
               print(np.ptp(im1.flatten()))
               for  i in range(len(im1)):
                 im1[i] = mask*im1[i]
