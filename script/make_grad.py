@@ -31,7 +31,7 @@ def copy_pair(split, name):
                 im1[i] = scale*mask*im1[i]
               
               Image.fromarray(im1).save(os.path.join(final_d, "input",split,name))
-              img.save(os.path.join(final_d, "output",split,name))
+              img2.save(os.path.join(final_d, "output",split,name))
         except FileNotFoundError: 
                 print("Not Found")
 
