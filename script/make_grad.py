@@ -6,7 +6,7 @@ from random import randrange
 # Create the new directory
 
 org_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_PC"
-final_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_PC_-2"
+final_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_PC_grad1"
 
 os.makedirs(final_d + "/input/train",exist_ok=True)
 os.makedirs(final_d + "/output/train",exist_ok=True)
