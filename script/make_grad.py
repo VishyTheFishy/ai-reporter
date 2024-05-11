@@ -29,7 +29,7 @@ def copy_pair(split, name):
               print(scale)
               for  i in range(len(im1)):
                 im1[i] = scale*mask*im1[i]
-             print(np.max(im1.flatten()))
+              print(np.max(im1.flatten()))
               
               Image.fromarray(im1).save(os.path.join(final_d, "input",split,name))
               img2.save(os.path.join(final_d, "output",split,name))
