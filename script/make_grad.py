@@ -25,14 +25,13 @@ def copy_pair(split, name):
           with Image.open(os.path.join(org_d, "input",split,name)) as img1:
             with Image.open(os.path.join(org_d, "output",split,name)) as img2:
               im1 = np.array(img1)
-              im2 = np.array(img2)
+              print(np.max(im1.flatten()))
+              scale = 255/(np.max(im1.flatten())*(1+slope))
               for  i in range(len(im1)):
-                im1[i] = mask*im1[i]
-                im2[i] = mask*im2[i]
-              print(np.ptp(im1.flatten()))
-
+                im1[i] = scale*mask*im1[i]
+              
               Image.fromarray(im1).save(os.path.join(final_d, "input",split,name))
-              Image.fromarray(im2).save(os.path.join(final_d, "output",split,name))
+              img.save(os.path.join(final_d, "output",split,name))
         except FileNotFoundError: 
                 print("Not Found")
 
