@@ -6,7 +6,7 @@ from random import randrange
 # Create the new directory
 
 org_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_PC"
-final_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_PC_grad1"
+final_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_PC_g1"
 
 os.makedirs(final_d + "/input/train",exist_ok=True)
 os.makedirs(final_d + "/output/train",exist_ok=True)
@@ -25,7 +25,8 @@ def copy_pair(split, name):
           with Image.open(os.path.join(org_d, "input",split,name)) as img1:
             with Image.open(os.path.join(org_d, "output",split,name)) as img2:
               im1 = np.array(img1)
-              scale = 255/(np.max(im1.flatten())*(1+slope))
+              #scale = 255/(np.max(im1.flatten())*(1+slope))
+              scale = 1
               print(scale)
               for  i in range(len(im1)):
                 im1[i] = scale*mask*im1[i]
