@@ -15,7 +15,7 @@ os.makedirs(final_d + "/output/test",exist_ok=True)
 
 
 size = 1024
-slope = .2
+slope = 1
 mask = np.linspace(1-slope,1+slope, num=size)
 mask = np.stack((mask,mask,mask)).T
 
