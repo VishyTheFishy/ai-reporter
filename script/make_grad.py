@@ -6,7 +6,7 @@ from random import randrange
 # Create the new directory
 
 org_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_PC"
-final_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_PC_grad-25"
+final_d = "/home/vishrutsgoyal/Nucleus_MSC_20x_PC_grad-1"
 
 os.makedirs(final_d + "/input/train",exist_ok=True)
 os.makedirs(final_d + "/output/train",exist_ok=True)
@@ -15,7 +15,7 @@ os.makedirs(final_d + "/output/test",exist_ok=True)
 
 
 size = 1024
-slope = .25
+slope = .1
 mask = np.linspace(1-slope,1+slope, num=size)
 mask = np.stack((mask,mask,mask)).T
 
