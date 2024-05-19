@@ -361,64 +361,48 @@ class LitTransferUnet(LitI2IGAN):
         flat_B = torch.flatten(embed_B).detach().cpu().numpy()
 
         print(np.linalg.norm((flat_A.flatten() - flat_B.flatten())))
-        
-        self.cossum += np.dot(flat_A,flat_B)/(np.linalg.norm(flat_A)*np.linalg.norm(flat_B))
-
-        self.sq_error.append((flat_A - flat_B)**2) 
-        self.actuals.append(flat_A)
-
 
         self.num_steps += 1
 
+        if(self.num_steps % 111 < 60):
+            self.cossum += np.dot(flat_A,flat_B)/(np.linalg.norm(flat_A)*np.linalg.norm(flat_B))
+            self.sq_error.append((flat_A - flat_B)**2) 
+            self.actuals.append(flat_A)
+        
+        else:
+            self.cossum_val += np.dot(flat_A,flat_B)/(np.linalg.norm(flat_A)*np.linalg.norm(flat_B))
+            self.sq_error_val.append((flat_A - flat_B)**2) 
+            self.actuals_val.append(flat_A)
 
-        if(self.num_steps % 222 == 0):
+            
+        if(self.num_steps % 111 == 59):
             vars = np.var(np.transpose(np.array(self.actuals)))
             errors = []
             for error in self.sq_error:
                 errors.append(np.mean(error/vars))
-
-            
-            print("epoch:", self.num_steps/222, "avg:", sum(errors)/222, "cos:", self.cossum/153)
+            print("Training Set | epoch:", self.num_steps/59, "avg:", sum(errors)/59, "cos:", self.cossum/59)
             self.sq_error = []
             self.actuals = []
             self.cossum = 0
-
-
-        return(loss(embed_A, embed_B))
-    
-    def validation_step(self, batch, batch_idx):
-        src_A, src_B = batch
-
         
-
-        embed_A = self.G_A(src_A, layer_n=self.hparams.adaptation_layer)
-        embed_B = self.G_transfer(src_B, layer_n=self.hparams.adaptation_layer)
-
-        flat_A = torch.flatten(embed_A).detach().cpu().numpy()
-        flat_B = torch.flatten(embed_B).detach().cpu().numpy()
-
-        print(np.linalg.norm((flat_A.flatten() - flat_B.flatten())))
-
-        self.cossum_val += np.dot(flat_A,flat_B)/(np.linalg.norm(flat_A)*np.linalg.norm(flat_B))
-
-
-        self.sq_error_val.append((flat_A - flat_B)**2) 
-        self.actuals_val.append(flat_A)
-        self.num_val_steps += 1
-        
-
-        if(self.num_val_steps % 153 == 2):
+        if(self.num_steps % 111 == 0):
             vars = np.var(np.transpose(np.array(self.actuals_val)))
             errors = []
             for error in self.sq_error_val:
                 errors.append(np.mean(error/vars))
-
-            
-            print("epoch:", (self.num_val_steps-2)/153, "val avg:", sum(errors)/153, "val cos:", self.cossum_val/153)
+            print("Training Set | epoch:", self.num_steps/52, "avg:", sum(errors)/52, "cos:", self.cossum_val/52)
             self.sq_error_val = []
             self.actuals_val = []
             self.cossum_val = 0
 
+        if(self.num_steps % 111 < 60):
+            return(loss(embed_A, embed_B))
+        else:
+            return(0*loss(embed_A, embed_B))
+    
+    def validation_step(self, batch, batch_idx):
+        src_A, src_B = batch
+        
     def test_step(self, batch, batch_idx):
         src_B, tgt_B = batch
 
