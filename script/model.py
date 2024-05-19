@@ -350,7 +350,6 @@ class LitTransferUnet(LitI2IGAN):
     def training_step(self, batch, batch_idx):
         src_A, src_B = batch
 
-        print(np.linalg.norm((torch.flatten(src_A) - torch.flatten(src_B)).detach().cpu().numpy()))
         
         embed_A = self.G_A(src_A, layer_n=self.hparams.adaptation_layer)
         embed_B = self.G_transfer(src_B, layer_n=self.hparams.adaptation_layer)
@@ -360,7 +359,6 @@ class LitTransferUnet(LitI2IGAN):
         flat_A = torch.flatten(embed_A).detach().cpu().numpy()
         flat_B = torch.flatten(embed_B).detach().cpu().numpy()
 
-        print(np.linalg.norm((flat_A.flatten() - flat_B.flatten())))
 
         self.num_steps += 1
 
@@ -380,7 +378,7 @@ class LitTransferUnet(LitI2IGAN):
             errors = []
             for error in self.sq_error:
                 errors.append(np.mean(error/vars))
-            print("Training Set | epoch:", self.num_steps/59, "avg:", sum(errors)/59, "cos:", self.cossum/59)
+            print("Training Set | epoch:", (self.num_steps+52)/111, "avg:", sum(errors)/59, "cos:", self.cossum/59)
             self.sq_error = []
             self.actuals = []
             self.cossum = 0
@@ -390,7 +388,7 @@ class LitTransferUnet(LitI2IGAN):
             errors = []
             for error in self.sq_error_val:
                 errors.append(np.mean(error/vars))
-            print("Training Set | epoch:", self.num_steps/52, "avg:", sum(errors)/52, "cos:", self.cossum_val/52)
+            print("Test Set | epoch:", self.num_steps/111, "avg:", sum(errors)/52, "cos:", self.cossum_val/52)
             self.sq_error_val = []
             self.actuals_val = []
             self.cossum_val = 0
